@@ -1,14 +1,14 @@
 <?php
 session_start();
-use Project\Controllers\Front\FrontController;
+use Project\Controllers\Pages;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
 try{
-    $frontController = new \Project\Controllers\Front\FrontController();
+    $pages = new \Project\Controllers\Pages();
     
     //Default behaviour if no action set
-    if(!isset($_GET['action'])) return $frontController->homePage();
+    if(!isset($_GET['action'])) return $pages->homePage();
     
     if(isset($_SESSION['id'])){
         // Actions for user only
@@ -18,20 +18,40 @@ try{
                 session_destroy();
                 header('Location: index.php');
             break;
-            case 'postCreate':
-                $frontController->postCreate();
+            case 'post-create':
+                $pages->postCreate();
             break;
-
+            case 'my-profile':
+                $pages->userProfile();
+            break;
+            case 'my-posts':
+                $pages->userPosts();
+            break;
+            case 'my-account':
+                $pages->userAccount();
+            break;
+            case 'account-edit':
+                $pages->accountEdit();
+            break;
+            case 'post-update':
+                $id= $_GET['id'];
+                $pages->postUpdate($id);
+            break;
+            case 'post-delete':
+                $id= $_GET['id'];
+                $pages->postDelete($id);
+            break;
         }
     }else{
         //Actions accessible without session being set
         switch($_GET['action']){
             case 'login':
-                $frontController->login();
+                $pages->login();
             break;
             case 'signup':
-                $frontController->signup();
+                $pages->signup();
             break;
+            default: $pages->homePage();
         };
     }
 }catch(Exception $e){

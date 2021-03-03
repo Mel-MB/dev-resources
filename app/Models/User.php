@@ -1,11 +1,11 @@
 <?php
 namespace Project\Models;
 
-class UsersManager extends Manager{
+class User extends Manager{
     public function __construct(){
         $this->db = $this->dbConnect();
     }
-    public function createUser($firstname, $name, $promotion,$email,$password){
+    public function create($firstname, $name, $promotion,$email,$password){
         $request = $this->db->prepare("INSERT INTO `users`(`email`,`password`,`firstname`,`name`,`promotion`) VALUES (?,?,?,?,?)");
         $request->execute(array($email,$password,$firstname, $name, $promotion));
         return $request;
@@ -17,10 +17,12 @@ class UsersManager extends Manager{
 
         return $alreadyexists;
     }
-    public function retrieveInfos($email){
+    public function retrieveData($email){
         $request = $this->db->prepare('SELECT * FROM `users` WHERE `email`=?');
         $request->execute(array($email));
+        
+        $result = $request->fetch()['0'];
 
-        return $request;
+        return $result;
     }
 }

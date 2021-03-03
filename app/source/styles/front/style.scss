@@ -25,5 +25,9 @@ $info: #0E3746;
 	        box-shadow: 0 0 5px rgba(0,80,80,.4); 
 	        border-radius: 4px;
         }
+    }
 }
+.main-page #articles {
+    height: 80vh;
+    justify-content: flex-start;
 }
