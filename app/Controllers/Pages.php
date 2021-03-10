@@ -6,8 +6,8 @@ Use Project\Models\Post;
 
 class Pages extends Controller{
     public function __construct() {
-        $this->User = new \Project\Models\User();
-        $this->Post = new \Project\Models\Post();
+        $this->User = new User;
+        $this->Post = new Post;
     }
 
     public function homePage(){
@@ -28,6 +28,7 @@ class Pages extends Controller{
         $data = [
             'title' => 'Se connecter',
             'description' => "Accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
+            'error' => $error ?? null
         ];
          // Behaviour in case of submit
          if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -36,7 +37,6 @@ class Pages extends Controller{
             
             if(!empty($email) && !empty($password)){
                 $user = $this->User->retrieveData($email);
-
                 // Verify 
                 $isPasswordCorrect= password_verify($password, $user['password']);
                 
@@ -62,11 +62,12 @@ class Pages extends Controller{
         $data = [
             'title' => "S'inscrire",
             'description' => "Créer un compte donnant accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
+            'error' => $error ?? null
         ];
         // Behaviour in case of submit
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Get form values
-            extract(array_map("htmlspecialchars", $_POST));
+            $post_data = extract(array_map("htmlspecialchars", $_POST));
             $psw = password_hash($password, PASSWORD_DEFAULT);
             $compulsoryFields = [$firstname,$name,$promotion,$email,$psw];
             $validation = true;
@@ -88,24 +89,12 @@ class Pages extends Controller{
                 $newUser =  $this->User->create($firstname, $name, $promotion,$email,$psw);               
                 header('Location: index.php?action=login');
             }
-            return $error;
         }
         $this->view('front/signup',$data);
     }
     public function userProfile(){
-        //Get user profil infos
-        $email = $_SESSION['email'];
-        $user = $this->User->retrieveData($email);
-        // Page data
-        $data = [
-            'title' => 'Mon profil',
-            'description' => "Gèrez les informations de votre compte sur le site de partage Kercode",
-            'user' => $user
-        ];
-        $this->view('front/userProfile',$data);
-    }
-    public function accountEdit(){
 
+        $this->view('front/userProfile',$data);
     }
     
     // Posts
@@ -182,11 +171,28 @@ class Pages extends Controller{
     }
     // User
     public function userAccount(){
+        //Get user account infos
+        $user = $this->User->retrieveData($_SESSION['email']);
+
         // Page data
         $data = [
             'title' => 'Mon compte utilisateur',
-            'description' => "Espace personnel permet de les informations de votre compte sur le site de partage Kercode",
+            'description' => "Espace personnel permet de visualiser les informations de votre compte sur le site de partage Kercode",
+            'user' => $user
         ];
+
         $this->view('front/userAccount',$data);
+    }
+    public function accountEdit(){
+        $user = $this->User->retrieveData($_SESSION['email']);
+
+        // Page data
+        $data = [
+            'title' => 'Mon compte utilisateur',
+            'description' => "Espace personnel permet de visualiser les informations de votre compte sur le site de partage Kercode",
+            'user' => $user
+        ];
+
+        $this->view('front/userEditAccount',$data);
     }
 }

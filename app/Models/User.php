@@ -3,7 +3,7 @@ namespace Project\Models;
 
 class User extends Manager{
     public function __construct(){
-        $this->db = $this->dbConnect();
+        $this->db = self::dbConnect();
     }
     public function create($firstname, $name, $promotion,$email,$password){
         $request = $this->db->prepare("INSERT INTO `users`(`email`,`password`,`firstname`,`name`,`promotion`) VALUES (?,?,?,?,?)");
@@ -21,7 +21,7 @@ class User extends Manager{
         $request = $this->db->prepare('SELECT * FROM `users` WHERE `email`=?');
         $request->execute(array($email));
         
-        $result = $request->fetch()['0'];
+        $result = $request->fetch();
 
         return $result;
     }

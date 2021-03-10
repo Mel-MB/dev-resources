@@ -2,7 +2,7 @@
     <h1><?=$data['title']?></h1>
     <table>
         <tr>
-            <td>Prénom</td>
+            <td>Pseudo</td>
             <td><?php if(isset($data['user']['pseudo'])) echo $data['user']['pseudo']?></td>
         </tr>
         <tr>

@@ -4,7 +4,7 @@ namespace Project\Models;
 
 class Post extends Manager {
     public function __construct(){
-        $this->db = $this->dbConnect();
+        $this->db = self::dbConnect();
     }
     public function create($link, $content, $user_email){
         $request = $this->db->prepare('INSERT INTO `posts`(link,content,user_id) VALUES( :link, :content, (SELECT `id` FROM `users` WHERE `email`= :userEmail))');
