@@ -125,12 +125,10 @@ class UsersController extends Controller{
             ];
             // Update user in database
             $update = $this->User->update($user_data,$socials_data);
-            var_dump($update);
-            die;
+
+            header('Location: index.php?action=account-edit');
         } else {
             $data['error'] = $validator->get_errors();
-            var_dump($data['error']);
-            die;
         }
         
 

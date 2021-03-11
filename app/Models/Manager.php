@@ -26,22 +26,26 @@ class Manager{
         $results = $request->fetchAll();
         return $results;
     }
+    public static function selectBy($db_column,$value){
+        $request =  self::dbConnect()->prepare('SELECT * FROM `".$class::TABLE_NAME."` WHERE :column = :value');
+        $request->execute([
+            'column'=> $db_column,
+            'value' => $value
+        ]);
+        
+        $result = $request->fetch();
 
-    public static function selectByID($id){
-        $class= get_called_class();
-
-        $query = "SELECT * FROM `".$class::TABLE_NAME."` WHERE id= ?";
-        $request = self::dbConnect()->prepare($query);
-        $request->execute([$id]);
-
-        $result= $request->fetch();
         return $result;
     }
+
     public static function alreadyExists($db_column,$value){
         $class= get_called_class();
 
-        $request =  self::dbConnect()->prepare("SELECT count(*) FROM `".$class::TABLE_NAME."` WHERE ?=?");
-        $request->execute([$db_column,$value]);
+        $request =  self::dbConnect()->prepare("SELECT count(*) FROM `".$class::TABLE_NAME."` WHERE :column = :value");
+        $request->execute([
+            'column'=> $db_column,
+            'value' => $value
+        ]);
         $alreadyexists =$request->fetch()[0];
 
         return $alreadyexists;
