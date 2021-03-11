@@ -7,24 +7,32 @@
                 <div class="text-center">
                     <h1 class="h2 my-5"><?= $data['title']?></h1>
                     <form method="post" class="text-center m-5">
-                        <?php if(isset($error)): ?>
-                        <div class="row bg-danger">
-                            <p><?= $error ?></p>
-                        </div>
-                        <?php endif ?>
+                        
                         <div class="row mb-3">
-                            <input class="col-12 col-md-6 m-1" type="text" name="firstname" placeholder="Prénom" aria-label="Entrez votre prénom">
-                            <input class="col-12 col-md-6 m-1" type="text" name="name" placeholder="Nom" aria-label="Entrez votre nom">
+                            <input type="text" name="username" placeholder="Pseudo" aria-label="Entrez votre prénom">
+                            <?php if(isset($data['error']['username'])): ?>
+                            <p class="text-primary"><?=$data['error']['username']?></p>
+                            <?php endif ?>
                         </div>
-                        <div class="row mb-3">
+                        <div class="row mb-5">
                                 <label for="promotion">Promotion</label>
-                                <input class="w-100" type="text" name="promotion" placeholder="2021" aria-label="Entrez votre année de certification">
+                                <input class="w-100" type="number" name="promotion" id="promotion" min="2017" max="<?= $date = date('Y')+1?>" name="promotion" placeholder="<?= $date = date('Y')?>">
+                                <p class="text-muted">Entrez votre année de certification</p>
+                                <?php if(isset($data['error']['promotion'])): ?>
+                                <p class="text-primary"><?=$data['error']['promotion']?></p>
+                                <?php endif ?>
                         </div>
                         <div class="row mb-3">
                             <input type="email" name="email" placeholder="Email" aria-label="Entrez votre email">
+                            <?php if(isset($data['error']['email'])): ?>
+                            <p class="text-primary"><?=$data['error']['email']?></p>
+                            <?php endif ?>
                         </div>
                         <div class="row mb-3">
                             <input type="password" name="password" placeholder="Mot de passe" aria-label="Entrez votre mot de passe"> 
+                            <?php if(isset($data['error']['password'])): ?>
+                            <p class="text-primary"><?=$data['error']['password']?></p>
+                            <?php endif ?>
                         </div>
                             
                         <input type="submit" name="submit" value="S'inscrire" class="btn btn-outline-primary">    

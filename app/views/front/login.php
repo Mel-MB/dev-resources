@@ -7,16 +7,16 @@
                 <div class="text-center">
                     <h1 class="h2 my-5"><?= $data['title']?></h1>
                     <form method="post" class="text-center m-5">
-                    <?php if(isset($error)): ?>
+                    <?php if(isset($data['error'])): ?>
                         <div class="row bg-danger">
-                            <p><?= $error ?></p>
+                            <p><?=$data['error']?></p>
                         </div>
                         <?php endif ?>
                         <div class="row mb-3 p-3">
                             <input type="email" name="email" placeholder="Email" aria-label="Entrez votre email">
                         </div>
                         <div class="row mb-3 p-3">
-                            <input type="password" name="password" placeholder="Mot de passe" aria-label="Entrez votre mot de passe"> 
+                            <input type="password" name="pass" placeholder="Mot de passe" aria-label="Entrez votre mot de passe"> 
                         </div>
                             
                         <input type="submit" name="submit" value="Se connecter" class="btn btn-outline-primary">    

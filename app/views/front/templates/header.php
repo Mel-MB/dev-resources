@@ -39,13 +39,13 @@
                             </a>
                         </li>
                         <li class="nav-item mx-2">
-                            <a href="index.php?action=my-account" class="nav-link btn btn-primary"><?=$_SESSION['firstname']?></a>
+                            <a href="index.php?action=my-account" class="nav-link btn btn-primary"><?=$_SESSION['pseudo']?></a>
                         </li>
                         <?php  
                     // NAV without user connection 
                     else: ?>
                         <li class="nav-item mx-2">
-                            <a href="index.php?action=signup" class="nav-link">S\'inscrire</a>
+                            <a href="index.php?action=signup" class="nav-link">S'inscrire</a>
                         </li>
                         <li class="nav-item mx-2">
                             <a href="index.php?action=login" class="nav-link btn btn-primary">Se connecter</a>

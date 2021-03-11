@@ -1,14 +1,16 @@
 <?php
 session_start();
-use Project\Controllers\Pages;
+use Project\Controllers\PostsController;
+use Project\Controllers\UsersController;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
 try{
-    $pages = new \Project\Controllers\Pages();
+    $post = new PostsController;
+    $user = new UsersController;
     
     //Default behaviour if no action set
-    if(!isset($_GET['action'])) return $pages->homePage();
+    if(!isset($_GET['action'])) return $post->list();
     
     if(isset($_SESSION['id'])){
         // Actions for user only
@@ -19,39 +21,42 @@ try{
                 header('Location: index.php');
             break;
             case 'post-create':
-                $pages->postCreate();
-            break;
-            case 'my-profile':
-                $pages->userProfile();
+                $post->create();
             break;
             case 'my-posts':
-                $pages->userPosts();
+                $post->published();
             break;
             case 'my-account':
-                $pages->userAccount();
+                $user->show();
             break;
             case 'account-edit':
-                $pages->accountEdit();
+                $user->edit();
+            break;
+            case 'account-update':
+                $user->update();
+            break;
+            case 'account-delete':
+                $user->delete();
             break;
             case 'post-update':
                 $id= $_GET['id'];
-                $pages->postUpdate($id);
+                $post->update($id);
             break;
             case 'post-delete':
                 $id= $_GET['id'];
-                $pages->postDelete($id);
+                $post->delete($id);
             break;
         }
     }else{
         //Actions accessible without session being set
         switch($_GET['action']){
             case 'login':
-                $pages->login();
+                $user->login();
             break;
             case 'signup':
-                $pages->signup();
+                $user->signup();
             break;
-            default: $pages->homePage();
+            default: $post->list();
         };
     }
 }catch(Exception $e){
