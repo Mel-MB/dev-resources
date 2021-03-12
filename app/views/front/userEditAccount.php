@@ -1,12 +1,16 @@
 <main class="container">
 <h1><?=$data['title']?></h1>
+
+
 <div class="row flex-column">
-    <form action="index.php?action=account-update" method="post" class="col-md-8 mx-auto">
+    <form method="post" class="col-md-8 mx-auto">
 
         <div class="container table">
         <?php if(isset($data['error'])): ?>
             <div class="row bg-danger">
-                <p><?= $data['error'] ?></p>
+                <?php foreach($data['error'] as  $error): ?>
+                <p><?= $error ?></p>
+                <?php endforeach ?>
             </div>
         <?php endif ?>
             <div class="row m-2">

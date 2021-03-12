@@ -6,11 +6,6 @@
             <div class="card">
                 <div class="card-body">
                     <p class="card-text"><?=$post['content']?></p>
-                    <?php if(isset($post['link'])): ?>
-                    <a href="<?php $post['link']['url'];?>">
-                        <!--Display link preview-->
-                    </a>
-                    <?php endif ?>
                 </div>
                 <div class="card-footer post-infos">
                     <p class="text-muted">Posté par <?=$post['pseudo']?> le <?= $post['publication'] = date("d/m/Y")?></p>

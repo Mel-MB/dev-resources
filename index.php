@@ -32,9 +32,6 @@ try{
             case 'account-edit':
                 $user->edit();
             break;
-            case 'account-update':
-                $user->update();
-            break;
             case 'account-delete':
                 $user->delete();
             break;

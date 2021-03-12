@@ -12,6 +12,24 @@ class Social extends Manager {
 
         return $social;
     }
+    
+    public static function selectByUser($user_id){
+        $db =self::dbConnect();
+
+        //Check if user already registered social(s) 
+        $query = $db->prepare("SELECT count(*) FROM `socials` WHERE user_id=?");
+        $query->execute([$user_id]);
+        $user_has_socials = $query->fetch()['0'];
+
+        // Get all socials linked to this user
+        if($user_has_socials){
+            $query_socials = $db->prepare("SELECT * FROM `socials` WHERE `user_id`=?");
+            $query_socials->execute([$user_id]);
+            $user_socials = $query_socials->fetchAll();
+        }
+
+        return $user_socials ?? null;
+    }
 
     public function update($id,$url){
         $request = $this->dbConnect()->prepare('UPDATE `socials` SET `url`= :url WHERE id= :id');

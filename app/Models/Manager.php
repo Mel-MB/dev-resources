@@ -27,10 +27,11 @@ class Manager{
         return $results;
     }
     public static function selectBy($db_column,$value){
-        $request =  self::dbConnect()->prepare('SELECT * FROM `".$class::TABLE_NAME."` WHERE :column = :value');
+        $class= get_called_class();
+
+        $request =  self::dbConnect()->prepare('SELECT * FROM `'.$class::TABLE_NAME.'` WHERE '.$db_column.' = :value');
         $request->execute([
-            'column'=> $db_column,
-            'value' => $value
+            'value' =>  $value,
         ]);
         
         $result = $request->fetch();
@@ -41,12 +42,11 @@ class Manager{
     public static function alreadyExists($db_column,$value){
         $class= get_called_class();
 
-        $request =  self::dbConnect()->prepare("SELECT count(*) FROM `".$class::TABLE_NAME."` WHERE :column = :value");
+        $request =  self::dbConnect()->prepare("SELECT count(*) FROM `".$class::TABLE_NAME."` WHERE ".$db_column." = :value");
         $request->execute([
-            'column'=> $db_column,
             'value' => $value
         ]);
-        $alreadyexists =$request->fetch()[0];
+        $alreadyexists = $request->fetch()[0];
 
         return $alreadyexists;
     }
@@ -60,7 +60,7 @@ class Manager{
         $class= get_called_class();
 
         $query = "DELETE FROM `".$class::TABLE_NAME."` WHERE id = ?";
-        $request = self::dbConnect()->query($query);
+        $request = self::dbConnect()->prepare($query);
         $request->execute([$id]);
 
         return $request;

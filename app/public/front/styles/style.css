@@ -10651,6 +10651,7 @@ textarea.form-control-lg {
 .main-page #articles {
   height: 80vh;
   justify-content: flex-start;
+  white-space: break-spaces;
 }
 
 /*# sourceMappingURL=style.css.map */

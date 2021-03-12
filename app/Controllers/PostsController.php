@@ -11,7 +11,12 @@ class PostsController extends Controller{
     // Posts
     public function list(){
         //Retrieve all posts
-        $posts= $this->Post->retrievePosts();
+        $posts= Post::allPosts();
+        if($posts){
+            foreach($posts as $post){
+                $post= array_map('htmlentities',$post);
+            }
+        }
         // Page data
         $data = [
             'title' => 'Partage de ressources Kercode',
@@ -24,13 +29,18 @@ class PostsController extends Controller{
         //Retrieve user posts
         $user_id = $_SESSION['id'];
         
-        $user_posts = $this->Post->user_posts($user_id);
+        $user_posts = Post::user_posts($user_id);
+        if($user_posts){
+            foreach($user_posts as $post){
+                $post= array_map('htmlentities',$post);
+            }
+        }
         
         // Page data
         $data = [
             'title' => "Mes contenus postés",
             'description' => "Gérer mes contenus partagés aux autres étudiants",
-            'user_posts' => $user_posts
+            'user_posts' =>  $user_posts
         ];
         $this->view('front/userPosts',$data);
         
@@ -45,15 +55,9 @@ class PostsController extends Controller{
         
         // Behaviour in case of submit
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Get form content
-            $postContent = htmlentities($_POST['pContent']);
-            $user_email = $_SESSION['email'];
-            
-            // Link treatment
-            $link = null;
-            
+               
             // Create new post in database
-            $newPost = $this->Post->create($link, $postContent, $user_email);
+            $newPost = Post::create($_POST['pContent'], $_SESSION['id']);
             
             header('Location: index.php');
         }
@@ -61,31 +65,26 @@ class PostsController extends Controller{
     }
     public function delete($id){
         // Delete post in database
-        $deletePost = $this->Post->delete($id);
+        $deletePost = Post::delete($id);
         // Show user posts again
         header('Location: index.php?action=my-posts');
     }
     public function update($id){
         // Retrieve previous post content
-        $previousPost= $this->Post->retrievePost($id);
+        $previousPost= Post::selectBy('id',$id);
         // Page data
         $data = [
             'title' => "Modifier un post",
             'description' => "Modifier un contenu partagé aux étudiants de Kercode",
             'submitMessage' => 'Mettre à jour',
-            'post' => $previousPost
+            'post' => array_map('htmlentities',$previousPost)
         ];
         
         // Behaviour in case of submit
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Get form content
-            $postContent = htmlentities($_POST['pContent']);
-            
-            // Link treatment
-            $link = null;
             
             // Create new post in database
-            $updatePost = $this->Post->update($id,$link, $postContent);
+            $updatePost = $this->Post->update($id, $_POST['pContent']);
             header('Location: index.php');
         }
         return $this->view('front/postForm',$data);

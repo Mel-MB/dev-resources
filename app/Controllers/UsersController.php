@@ -22,10 +22,10 @@ class UsersController extends Controller{
             // Validate form values
             $validator= new ValidationController($_POST);
 
-            if($validator->is_valid()){
+            if($validator->is_valid() && $validator->unique_checks()){
                 extract($_POST);
                 // Try to retrieve user from data
-                $user = User::selectByEmail($email);
+                $user = User::selectBy('email',$email);
 
                 if($user && password_verify($pass, $user['password'])){
                     //Set session
@@ -71,7 +71,7 @@ class UsersController extends Controller{
     }
     public function show(){
         //Get user account infos
-        $user = User::selectByEmail($_SESSION['email']);
+        $user = User::selectEditable($_SESSION['id']);
 
         // Page data
         $data = [
@@ -83,7 +83,7 @@ class UsersController extends Controller{
         $this->view('front/userAccount',$data);
     }
     public function edit(){
-        $user = $this->User->selectByEmail($_SESSION['email']);
+        $user = User::selectEditable($_SESSION['id']);
 
         // Page data
         $data = [
@@ -91,6 +91,36 @@ class UsersController extends Controller{
             'description' => "Espace personnel permet de visualiser les informations de votre compte sur le site de partage Kercode",
             'user' => $user
         ];
+
+         // Behaviour in case of submit
+         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate form values
+            $validator= new ValidationController($_POST);
+            if($validator->is_valid()) {
+                extract($_POST);
+                $user_data=[
+                    'id' => $_SESSION['id'],
+                    'username' => $username,
+                    'email' => $email,
+                    'promotion' => $promotion,
+                    'job' => $job,
+                ];
+                $socials_data=[
+                    'own_website' => $own_website,
+                    'github' => $github,
+                    'linkedin' => $linkedin,
+                    'discord' => $discord,
+                    'codepen' => $codepen
+                ];
+                // Update user in database
+                $update = $this->User->update($user_data,$socials_data);
+
+                header('Location: index.php?action=account-edit');
+            } else {
+                $data['error'] = $validator->get_errors();
+                
+            }
+        }
 
         $this->view('front/userEditAccount',$data);
     }
@@ -103,35 +133,6 @@ class UsersController extends Controller{
         header('Location: index.php?action=login');
         exit();
         
-    }
-    public function update(){
-        // Validate form values
-        $validator= new ValidationController($_POST);
-        if($validator->is_valid() && $validator->is_unique()) {
-            extract($_POST);
-            $user_data=[
-                'id' => $_SESSION['id'],
-                'username' => $username,
-                'email' => $email,
-                'promotion' => $promotion,
-                'job' => $job,
-            ];
-            $socials_data=[
-                'own_website' => $own_website,
-                'github' => $github,
-                'linkedin' => $linkedin,
-                'discord' => $discord,
-                'codepen' => $codepen
-            ];
-            // Update user in database
-            $update = $this->User->update($user_data,$socials_data);
-
-            header('Location: index.php?action=account-edit');
-        } else {
-            $data['error'] = $validator->get_errors();
-        }
-        
-
     }
     
 }

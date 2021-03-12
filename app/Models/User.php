@@ -12,22 +12,19 @@ class User extends Manager{
         $request->execute(array($email,$password,$pseudo, $promotion));
         return $request;
     }
-    public static function selectEditable($id){ 
-        $request = self::dbConnect()->prepare(
-            "SELECT 
-                u.pseudo AS pseudo,
-                u.email AS email,
-                u.promotion AS promotion,
-                u.job AS job
-
-            FROM `users` AS u
-            INNER JOIN `socials` AS s ON u.id = s.user_id
-            WHERE u.id= ?"
-        );
-        $request->execute([$id]);
-
-        $result= $request->fetch();
-        return $result;
+    public static function selectEditable($user_id){
+        // Select user data
+        $user = self::dbConnect()->prepare("SELECT pseudo, email, promotion, job FROM `users` WHERE id= ?");
+        $user->execute([$user_id]);
+        $user_data= $user->fetch();
+        // Select social networks filled by user
+        $user_socials = Social::selectByUser($user_id);
+        if($user_socials){
+            foreach($user_socials as $social){
+                $user_data['socials'][$social['type']] = $social['url'];
+            }
+        }
+        return $user_data;
     }
     
     public function update($user_data,$socials_data){
@@ -41,21 +38,11 @@ class User extends Manager{
             $user_update = $db->prepare("UPDATE `users` SET pseudo= :username, email= :email, promotion= :promotion, job= :job WHERE id= :id");
             $user_update->execute($user_data);
             
-            //Check if user already registered social(s) 
-            $query = $db->prepare("SELECT count(*) FROM `socials` WHERE user_id=?");
-            $query->execute([$user_data['id']]);
-            $user_has_socials = $query->fetch()['0'];
-
-            if($user_has_socials){
-                $query_socials = $db->prepare("SELECT * FROM `socials` WHERE `user_id`=?");
-                $query_socials->execute([$user_data['id']]);
-                $user_socials = $query_socials->fetchAll();
-            }
-
+            $user_socials = Social::selectByUser($user_data['id']);
 
             foreach($socials_data as $type => $url){
                 
-                if($user_has_socials){
+                if($user_socials){
                     //Loop on socials linked to this user
                     foreach($user_socials as $social){
                         // Check if registered social matchs with given data
