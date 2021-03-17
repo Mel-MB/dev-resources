@@ -21,7 +21,7 @@ This app was born for my training validation. The idea came from a need to keep 
 
 ## Getting started
 
-This is an open source project. Feel free to contribute and [report issues](https://github.com/Mel-MB/sharecodes/issues).
+This project is **open source**. Feel free to contribute and [report issues](https://github.com/Mel-MB/sharecodes/issues).
 
 ### Setup
 
