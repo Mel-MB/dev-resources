@@ -4,7 +4,7 @@
 <h1>Sharecodes</h1>	
 <p>A post organizer to help resource sharing between classmates</p>
     <a href="#">Visit the app</a> - <a href="https://github.com/Mel-MB/sharecodes/issues">Request a feature</a> - <a href="https://github.com/Mel-MB/sharecodes/issues">Report a bug</a>
-
+</center>
 <!-- About the app-->
 
 ## About the project 
