@@ -1,28 +1,31 @@
-<?php   
+<?php
 
 namespace Project\Controllers;
-Use Project\Models\User;
-Use Project\Controllers\ValidationController;
 
-class UsersController extends Controller{
-    public function __construct(){
-        $this->User = new User;
-    }
+use Project\Core\{Application,Controller, Request};
+use Project\Entities\{User as User};
 
-    //User
-    public function login(){
+
+class AuthController extends Controller{
+    
+    public function login(Request $request){
+        $user = new User();
         // Page data
         $data = [
             'title' => 'Se connecter',
             'description' => "Accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
+            'entity' => $user,
         ];
+        
+        if ($request->isPost()){
+            $user->populate($request->getData());
 
-         // Behaviour in case of submit
-         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Validate form values
-            $validator= new ValidationController($_POST);
+            // if ($user->validate && $user->register()){
+            //     Application::$app->session->setFlash('success', 'Thanks for registering');
+            //     Application::$app->response->redirect('/');
+            // }
 
-            if($validator->is_valid()){
+            /* if($validator->is_valid()){
                 extract($_POST);
                 // Try to retrieve user from data
                 $user = User::selectBy('email',$email);
@@ -40,35 +43,29 @@ class UsersController extends Controller{
                 }  
             }else {
                 $data['error'] = 'Veuillez saisir un identifiant et un mot de passe valide';
-            }
+            }*/
         }
-        $this->view('front/login',$data);
+        $this->render('front/login',$data);
     }
-    public function signup(){
+    public function register(Request $request){
+        $user = new User();
+        if($request->isPost()){
+            $user->populate($request->getData());
+
+            return $user->register();
+            // if ($user->validate && $user->register()){
+            //     Application::$app->session->setFlash('success', 'Thanks for registering');
+            //     Application::$app->response->redirect('/');
+            // }
+        }
         // Page data
         $data = [
             'title' => "S'inscrire",
-            'description' => "Créer un compte donnant accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
-
+            'description' => "Accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
+            'entity' => $user,
         ];
-        // Behaviour in case of submit
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Validate form values
-            $validator= new ValidationController($_POST);
-            
-            if($validator->is_valid() && $validator->is_unique()){
-                extract($_POST);
-                $psw = password_hash($password, PASSWORD_DEFAULT);
-                
-                // log new user on database
-                $newUser =  User::create($username, $promotion,$email,$psw);               
-                header('Location: index.php?action=login');
-                exit();
-            }
-            $data['error'] = $validator->get_errors();
-        }
-        $this->view('front/signup',$data);
-    }
+        $this->render('front/register',$data);
+    }/*
     public function show(){
         //Get user account infos
         $user = User::selectEditable($_SESSION['id']);
@@ -133,6 +130,6 @@ class UsersController extends Controller{
         header('Location: index.php?action=login');
         exit();
         
-    }
-    
+    } */
+
 }

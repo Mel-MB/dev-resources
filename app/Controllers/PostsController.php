@@ -1,7 +1,7 @@
 <?php   
 
 namespace Project\Controllers;
-Use Project\Models\Post;
+Use Project\Manager\Post;
 Use Project\Controllers\ValidationController;
 
 class PostsController extends Controller{
