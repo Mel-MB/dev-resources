@@ -1,8 +1,8 @@
 <?php
 
-namespace Project\Core\Form;
+namespace Project\Utilities\Form;
 
-use Project\Entities\Entity;
+use Project\Core\Entity;
 
 class Form{
 

@@ -1,19 +1,19 @@
 <?php
 
-namespace Project\Core\Form;
+namespace Project\Utilities\Form;
 
-use Project\Entities\Entity;
+use Project\Core\Entity;
 
 use function PHPSTORM_META\type;
 
 class Field{
-    public const TYPE_TEXT ='text';
-    public const TYPE_PASSWORD ='password';
-    public const TYPE_EMAIL ='email';
-    public const TYPE_NUMBER ='number';
+    private const TYPE_TEXT ='text';
+    private const TYPE_PASSWORD ='password';
+    private const TYPE_EMAIL ='email';
+    private const TYPE_NUMBER ='number';
 
-    public string $type;
-    public Entity $entity;
+    private string $type;
+    private Entity $entity;
     public string $attribute;
 
     public function __construct(Entity $entity, string $attribute){
@@ -35,14 +35,10 @@ class Field{
         ', $this->entity->getLabel($this->attribute),
         $this->type,
         $this->attribute,
-        $this->entity->{$this->attribute},
+        $this->type !== self::TYPE_PASSWORD ? $this->entity->{$this->attribute} : '',
         $this->entity->hasError($this->attribute) ? ' is-invalid' : '',
         $this->entity->getFirstError($this->attribute)
         );
-    }
-    public function passwordField(){
-        $this->type = self::TYPE_PASSWORD;
-        return $this;
     }
     public function numberField(){
         $this->type = self::TYPE_NUMBER;
@@ -50,6 +46,10 @@ class Field{
     }
     public function emailField(){
         $this->type = self::TYPE_EMAIL;
+        return $this;
+    }
+    public function passwordField(){
+        $this->type = self::TYPE_PASSWORD;
         return $this;
     }
 }

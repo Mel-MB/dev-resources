@@ -2,14 +2,33 @@
 
 namespace Project\Controllers;
 
-use Project\Core\{Application,Controller, Request};
-use Project\Entities\{User as User};
+use Project\Core\{Application, Controller, Request};
+use Project\Entities\User;
 
 
 class AuthController extends Controller{
-    
     public function login(Request $request){
+
         $user = new User();
+        $user->rules = [
+            'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18]],
+            'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]]
+        ];
+
+        if ($request->isPost()){
+            $user->populate($request->getData());
+ 
+            if($user->validate()){
+                if($user->connect()){
+                    Application::$app->session->setFlash('success', "Vous êtes connecté");
+                    header('Location: /');
+                    exit;
+                } else {
+                    Application::$app->session->setFlash('error', "Pseudo ou mot de passe incorrect");
+                }
+            }    
+        }
+        
         // Page data
         $data = [
             'title' => 'Se connecter',
@@ -17,70 +36,50 @@ class AuthController extends Controller{
             'entity' => $user,
         ];
         
-        if ($request->isPost()){
-            $user->populate($request->getData());
-
-            // if ($user->validate && $user->register()){
-            //     Application::$app->session->setFlash('success', 'Thanks for registering');
-            //     Application::$app->response->redirect('/');
-            // }
-
-            /* if($validator->is_valid()){
-                extract($_POST);
-                // Try to retrieve user from data
-                $user = User::selectBy('email',$email);
-
-                if($user && password_verify($pass, $user['password'])){
-                    //Set session
-                    $_SESSION['id']= $user['id'];
-                    $_SESSION['pseudo']= $user['pseudo'];
-                    $_SESSION['email']= $user['email'];
-
-                    header('Location: index.php');
-                    exit();
-                }else{
-                    $data['error'] = 'Identifiant ou mot de passe incorrect';
-                }  
-            }else {
-                $data['error'] = 'Veuillez saisir un identifiant et un mot de passe valide';
-            }*/
-        }
-        $this->render('front/login',$data);
+        return $this->render('front/login',$data);
+    }
+    public function logout(){
+        Application::$app->logout();
+        header('Location: /');
+        exit;
     }
     public function register(Request $request){
         $user = new User();
+        $user->rules = [
+            'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18],User::RULE_UNIQUE],
+            'email' => [User::RULE_REQUIRED, User::RULE_EMAIL,User::RULE_UNIQUE],
+            'promotion' => [User::RULE_REQUIRED, User::RULE_YEAR],
+            'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]],
+            'passwordConfirm' => [User::RULE_REQUIRED, [User::RULE_MATCH, 'match'=> 'password']]
+        ];
+        
         if($request->isPost()){
             $user->populate($request->getData());
 
-            return $user->register();
-            // if ($user->validate && $user->register()){
-            //     Application::$app->session->setFlash('success', 'Thanks for registering');
-            //     Application::$app->response->redirect('/');
-            // }
+            if ($user->validate()){
+                try{
+                    $user->create();
+                    Application::$app->session->setFlash('success', 'Vous êtes inscrit');
+                    header('Location: /se-connecter');
+                    exit;
+                }catch(\Exception $e){
+                    Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard");
+                }
+            }
         }
+
         // Page data
         $data = [
             'title' => "S'inscrire",
             'description' => "Accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
             'entity' => $user,
         ];
-        $this->render('front/register',$data);
-    }/*
-    public function show(){
-        //Get user account infos
-        $user = User::selectEditable($_SESSION['id']);
 
-        // Page data
-        $data = [
-            'title' => 'Mon compte utilisateur',
-            'description' => "Espace personnel permet de visualiser les informations de votre compte sur le site de partage Kercode",
-            'user' => $user
-        ];
-
-        $this->view('front/userAccount',$data);
+        return $this->render('front/register',$data);
     }
-    public function edit(){
-        $user = User::selectEditable($_SESSION['id']);
+    public function profile(){
+        //Get user account infos
+        $user = Application::$app->user;
 
         // Page data
         $data = [
@@ -89,37 +88,35 @@ class AuthController extends Controller{
             'user' => $user
         ];
 
-         // Behaviour in case of submit
-         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Validate form values
-            $validator= new ValidationController($_POST);
-            if($validator->is_valid() && $validator->unique_checks()) {
-                extract($_POST);
-                $user_data=[
-                    'id' => $_SESSION['id'],
-                    'username' => $username,
-                    'email' => $email,
-                    'promotion' => $promotion,
-                    'job' => $job,
-                ];
-                $socials_data=[
-                    'own_website' => $own_website,
-                    'github' => $github,
-                    'linkedin' => $linkedin,
-                    'discord' => $discord,
-                    'codepen' => $codepen
-                ];
-                // Update user in database
-                $update = $this->User->update($user_data,$socials_data);
+        $this->render('front/userAccount',$data);
+    }
+    public function edit(Request $request){
+        $user = Application::$app->user;
+        $user->rules = [
+            'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18]],
+            'email' => [User::RULE_REQUIRED, User::RULE_EMAIL],
+            'promotion' => [User::RULE_REQUIRED, User::RULE_YEAR],
+        ];
+        
+        if($request->isPost()){
+            $user->populate($request->getData());
 
-                header('Location: index.php?action=account-edit');
-            } else {
-                $data['error'] = $validator->get_errors();
-                
+            if ($user->validate()){
+                if($user->update()){
+                    Application::$app->session->setFlash('success', 'Les modifications ont été enregistrées');
+                    header('Location: /votre-profil');
+                    exit;
+                }
             }
         }
+        // Page data
+        $data = [
+            'title' => 'Mon compte utilisateur',
+            'description' => "Espace personnel permet de visualiser les informations de votre compte sur le site de partage Kercode",
+            'user' => $user
+        ];
 
-        $this->view('front/userEditAccount',$data);
+        $this->render('front/userEditAccount',$data);
     }
     public function delete(){
         // Delete user in database
@@ -130,6 +127,5 @@ class AuthController extends Controller{
         header('Location: index.php?action=login');
         exit();
         
-    } */
-
+    }
 }

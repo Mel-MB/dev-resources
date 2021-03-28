@@ -1,8 +1,9 @@
 <?php   
 
 namespace Project\Controllers;
-Use Project\Manager\Post;
-Use Project\Controllers\ValidationController;
+
+use Project\Core\Controller;
+use Project\Manager\Post;
 
 class PostsController extends Controller{
     public function __construct(){

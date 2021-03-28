@@ -2,6 +2,8 @@
 
 namespace Project\Managers;
 
+use Project\Core\Manager;
+
 class Social extends Manager {
     const TABLE_NAME = 'socials';
 

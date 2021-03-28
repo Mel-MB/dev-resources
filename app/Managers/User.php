@@ -1,33 +1,10 @@
 <?php
 namespace Project\Managers;
 
-use Project\Core\Application;
-use Project\Entities\User as UserEntity;
-Use \Project\Managers\Social;
+use Project\Core\{Application, Manager};
 
 
-class User extends Manager{
-    const TABLE_NAME = 'users';
-
-    protected static function tableName():string{
-        return self::TABLE_NAME;
-    }
-
-    public static function selectEditable($user_id){
-        // Select user data
-        $user = self::prepare("SELECT pseudo, email, promotion, job FROM `users` WHERE id= ?");
-        $user->execute([$user_id]);
-        $user_data= $user->fetch();
-        // Select social networks filled by user
-        $user_socials = Social::selectByUser($user_id);
-        if($user_socials){
-            foreach($user_socials as $social){
-                $user_data['socials'][$social['type']] = $social['url'];
-            }
-        }
-        return $user_data;
-    }
-    
+class User extends Manager{  
     public function update($user_data,$socials_data){
         try {
             $db= Application::$app->db->pdo;

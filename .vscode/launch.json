@@ -16,8 +16,8 @@
             "name": "Launch currently open script",
             "type": "php",
             "request": "launch",
-            "program": "${workspaceRoot}\\index.php",
-            "cwd": "${workspaceRoot}"
+            "program": "${workspaceRoot}\\public\\index.php",
+            "cwd": "${workspaceRoot}\\public"
         }
     ]
 }

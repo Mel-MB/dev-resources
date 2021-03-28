@@ -1,4 +1,4 @@
-<!-- Project pitch -->
+<!-- Project\Core pitch -->
 
 <center>
 <h1>Sharecodes</h1>	
@@ -41,7 +41,7 @@ Any contributions are highly appreciated.
 
 How to proceed:
 
-1. Fork the Project
+1. Fork the Project\Core
 2. Create your Feature Branch (`git checkout -b feature/YourFeatureName`)
 3. Commit your Changes (`git commit -m 'Add YourAwesomeFeature'`)
 4. Push to the Branch (`git push origin feature/YourFeatureName`)

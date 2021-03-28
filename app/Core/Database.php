@@ -1,5 +1,4 @@
 <?php
-
 namespace Project\Core;
 
 class Database{
@@ -43,6 +42,7 @@ class Database{
             $this->log("All migrations are already applied");
         }
     }
+
     private function createMigrationsTable(){
         $this->pdo->exec(
             "CREATE TABLE IF NOT EXISTS migrations(
@@ -51,17 +51,20 @@ class Database{
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
         ");
     }
+
     private function getAppliedMigrations(){
         $statement = $this->pdo->prepare("SELECT migration FROM migrations");
         $statement->execute();
         //Return resulst is as single dimensions arrays
         return $statement->fetchAll(\PDO::FETCH_COLUMN);
     }
+
     private function saveMigrations(array $migrations){
         $str = implode(",", array_map(fn($m)=>"('$m')",$migrations));
         $statement = $this->pdo->prepare("INSERT INTO migrations (migration) VALUES $str");
         $statement->execute();
     }
+
     private function log($message){
         echo "[" . date("Y-m-d H:i:s") . "] - " . $message . PHP_EOL;
     }

@@ -1,5 +1,4 @@
 <main  class="container main-page">
-<?php var_dump($_SESSION)?>
     <h1><?= $data['title']?></h1>
     <section id="articles" class="d-flex flex-wrap flex-column">
         <?php foreach($posts as $post):?>

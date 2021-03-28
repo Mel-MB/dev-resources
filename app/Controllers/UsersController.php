@@ -1,6 +1,8 @@
 <?php   
 
 namespace Project\Controllers;
+
+use Project\Core\Controller;
 Use Project\Models\User;
 Use Project\Controllers\ValidationController;
 

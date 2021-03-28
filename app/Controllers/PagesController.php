@@ -2,7 +2,7 @@
 
 namespace Project\Controllers;
 
-use Project\Core\{Application,Controller, Request};
+use Project\Core\{Application, Controller, Request};
 
 class PagesController extends Controller{
     public function home(){

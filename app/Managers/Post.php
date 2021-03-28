@@ -2,6 +2,8 @@
 
 namespace Project\Managers;
 
+use Manager;
+
 class Post extends Manager {
     const TABLE_NAME = 'posts';
 

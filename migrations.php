@@ -1,12 +1,10 @@
-<?php
-use Project\Controllers\{PagesController,AuthController};
-use Project\Core\{Application};
+<?php;
+use Project\Core\Application;
 
 
 require_once(__DIR__.'/vendor/autoload.php');
 $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
-
 
 $config =[
     'db' => [

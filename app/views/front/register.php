@@ -1,7 +1,7 @@
 <main>
     <div class="container">
         <h1><?= $data['title']?></h1>
-        <?php $form = Project\Core\Form\Form::begin('', "POST")?>
+        <?php $form = Project\Utilities\Form\Form::begin('', "POST")?>
             <?= $form->field($entity,'username')?>
             <?= $form->field($entity,'promotion')->numberField()?>
             <?= $form->field($entity,'email')->emailField()?>
@@ -10,6 +10,6 @@
 
             <input type="submit" name="submit" value="S'inscrire" class="btn btn-outline-primary">    
 
-        <?php Project\Core\Form\Form::end()?>
+        <?php Project\Utilities\Form\Form::end()?>
     </div>
 </main>

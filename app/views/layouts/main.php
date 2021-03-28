@@ -1,6 +1,6 @@
 <?php
 
-use Project\Core\{Application};
+use Project\Core\Application;
 
 ?>
 <!DOCTYPE html>
@@ -20,22 +20,27 @@ use Project\Core\{Application};
 <body>
     <header class="sticky-top">
         <div class="container">
-            <nav class="navbar navbar-light ">
+            <nav class="navbar">
                 <a href="index.php" class="navbar-brand">
                     code
                 </a>
                 <ul class="navbar-nav flex-row ml-auto">
-                    <li class="nav-item mx-2">
-                        <a href="/s-inscrire" class="nav-link">S'inscrire</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a href="/se-connecter" class="nav-link btn btn-primary">Se connecter</a>
-                    </li>
+                    <?php if(Application::$app->isGuest()){
+                        require_once('_nav-guest.php');
+                    }else{
+                        require_once('_nav-auth.php');
+                    }?>
                 </ul>
             </nav>
         </div>
     </header>
+    <?php if(Application::$app->session->hasFlashes()):?>
+        <?php foreach(Application::$app->session->getFlashes() as $type => $message): ?>
+            <div class="alert alert-<?=$type?>">
+                <?= $message?>
+            </div>
 
+    <?php endforeach; endif ?>
     <main>
     {{-content-}}
     </main>
