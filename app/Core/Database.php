@@ -7,7 +7,9 @@ class Database{
     public function __construct(array $config){
         try{
             self::$pdo = new \PDO($config['dsn'],$config['user'],$config['password']);
-            //configure pdo to display errors => Interesting on develop mode, best practice is to remove it on prod for security matters
+            // configure pdo fetch return values
+            self::$pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
+            // configure pdo to display throw errors
             self::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         }catch(\PDOException $e){
             die('Erreur: '.$e->getMessage());

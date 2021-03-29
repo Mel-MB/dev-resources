@@ -4,82 +4,21 @@ namespace Project\Controllers;
 
 use Project\Core\{Application, Controller, Request};
 use Project\Entities\User;
-
+use Project\Middlewares\AuthMiddleware;
 
 class AuthController extends Controller{
-    public function login(Request $request){
-
-        $user = new User();
-        $user->rules = [
-            'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18]],
-            'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]]
-        ];
-
-        if ($request->isPost()){
-            $user->populate($request->getData());
- 
-            if($user->validate()){
-                if($user->connect()){
-                    Application::$app->session->setFlash('success', "Vous êtes connecté");
-                    header('Location: /');
-                    exit;
-                } else {
-                    Application::$app->session->setFlash('error', "Pseudo ou mot de passe incorrect");
-                }
-            }    
-        }
-        
-        // Page data
-        $data = [
-            'title' => 'Se connecter',
-            'description' => "Accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
-            'entity' => $user,
-        ];
-        
-        return $this->render('front/login',$data);
+    public function __construct(){
+        $this->registerMiddleware(new AuthMiddleware);
     }
     public function logout(){
-        Application::$app->logout();
+        Application::$app->session->remove();
+        Application::$app->session->setFlash('success', "Vous êtes déconnecté");
         header('Location: /');
-        exit;
-    }
-    public function register(Request $request){
-        $user = new User();
-        $user->rules = [
-            'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18],User::RULE_UNIQUE],
-            'email' => [User::RULE_REQUIRED, User::RULE_EMAIL,User::RULE_UNIQUE],
-            'promotion' => [User::RULE_REQUIRED, User::RULE_YEAR],
-            'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]],
-            'passwordConfirm' => [User::RULE_REQUIRED, [User::RULE_MATCH, 'match'=> 'password']]
-        ];
-        
-        if($request->isPost()){
-            $user->populate($request->getData());
-
-            if ($user->validate()){
-                try{
-                    $user->create();
-                    Application::$app->session->setFlash('success', 'Vous êtes inscrit');
-                    header('Location: /se-connecter');
-                    exit;
-                }catch(\Exception $e){
-                    Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard");
-                }
-            }
-        }
-
-        // Page data
-        $data = [
-            'title' => "S'inscrire",
-            'description' => "Accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
-            'entity' => $user,
-        ];
-
-        return $this->render('front/register',$data);
     }
     public function profile(){
         //Get user account infos
-        $user = Application::$app->user;
+        $user = new User;
+        $user = $user->show(Application::$app->session->get('id'));
 
         // Page data
         $data = [
@@ -88,10 +27,13 @@ class AuthController extends Controller{
             'user' => $user
         ];
 
-        $this->render('front/userAccount',$data);
+        return $this->render('front/userAccount',$data);
     }
     public function edit(Request $request){
-        $user = Application::$app->user;
+        //Get user account infos
+        $user = new User;
+        $user = $user->show(Application::$app->session->get('id'));
+        
         $user->rules = [
             'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18]],
             'email' => [User::RULE_REQUIRED, User::RULE_EMAIL],
@@ -104,7 +46,7 @@ class AuthController extends Controller{
             if ($user->validate()){
                 if($user->update()){
                     Application::$app->session->setFlash('success', 'Les modifications ont été enregistrées');
-                    header('Location: /votre-profil');
+                    header('Location: /mon-compte');
                     exit;
                 }
             }
@@ -116,16 +58,19 @@ class AuthController extends Controller{
             'user' => $user
         ];
 
-        $this->render('front/userEditAccount',$data);
+        return $this->render('front/userEditAccount',$data);
     }
     public function delete(){
         // Delete user in database
-        $deleteUser = User::delete($_SESSION['id']);
-        session_unset();
-        session_destroy();
+        $user = new User;
+        $user->delete();
+        // Unset session
+        Application::$app->session->remove();
 
-        header('Location: index.php?action=login');
+        Application::$app->session->setFlash('success', 'Vous êtes déconnecté');
+        header('Location: /');
         exit();
         
     }
+
 }

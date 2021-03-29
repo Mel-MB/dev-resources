@@ -4,57 +4,24 @@ use  Project\Core\{Response,Request,Router,Database,Manager,Entity};
 use Project\Entities\User;
 
 class Application{
-
     public static string $ROOT_DIR;
-    public static Application $app;
-    public Router $router;
-    public Request $request;
+    public static ?Application $app;
     public Session $session;
-    public Response $response;
     public Controller $controller;
-
+    public Router $router;
     public Database $db;
-    private $userModel;
 
-    public ?User $user;
-
-    public function __construct($rootPath,array $config){
+    public function __construct(string $rootPath,array $config){
         self::$ROOT_DIR     = $rootPath;
         self::$app          = $this; //allows to call actual instance of class app anywhere
-        $this->request      = new Request();
-        $this->response     = new Response();
-        $this->router       = new Router($this->request,$this->response);
+        $this->router       = new Router();
         $this->db           = new Database($config['db']);
-        $this->userModel    = $config['userEntity']();
-
         $this->session      = new Session();
-        $this->user         = $this->connected();
-
     }
 
-    // Complementary instantiation methods
-    private function connected(){
-        $identifierValue = $this->session->get('user');
-        if($identifierValue){
-            return $this->userModel::newInstanceFromPrimaryKey($identifierValue);
-        }else{
-            return null;
-        }
-    }
-    public function setController(Controller $controller){
-        $this->controller   = $controller;
-    }
-
-    //Session related methods
-    public static function isGuest(): bool{
-        return !self::$app->user;
-    }
-    public function login(Entity $user): void{
-        $this->user = $user;
-    }
-    public function logout(): void{
-        $this->user = null;
-        $this->session->remove('user');
+    // Instantiation methods    
+    public function setController(Controller $controller): object{
+        return $this->controller = $controller;
     }
 
     // Router exceptions handdling
@@ -62,9 +29,19 @@ class Application{
         try{
             echo $this->router->resolve();
         } catch( \Exception $e) {
-            $this->response->setStatusCode($e->getCode());
-            $this->setController(new Controller());
-            echo $this->controller->render('error', ['exception' => $e]);
+            if($e->getCode() === 404){
+                $this->router->response->setStatusCode($e->getCode());
+                $this->setController(new Controller());
+                echo $this->controller->render('error', ['exception' => $e]);
+                exit;
+            }
+            Application::$app->session->setFlash('error',$e->getMessage());
+            header("Location: ".$e->redirectLink);
         }
+    }
+
+    //Session related method
+    public static function isGuest(): bool{
+        return !self::$app->session->get('id');
     }
 }

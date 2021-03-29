@@ -14,16 +14,25 @@ class Session{
     public function get(string $key){
         return $_SESSION[$key] ?? false;
     }
+    public function login(int $id, string $username, string $email): void{
+        $this->set('id', $id);
+        $this->set('username', $username);
+        $this->set('email', $email);
+    }
     
-    public function remove(string $key): void{
-        unset($_SESSION[$key]);
+    public function remove(string $key = null): void{
+        if($key){
+            unset($_SESSION[$key]);
+        }else{
+            session_unset();
+        }
     }
 
     public function hasFlashes(): bool{
         return isset($_SESSION['flash']);
     }
 
-    public function setFlash(string $type, string $message): void{
+    public function setFlash(string $type, $message): void{
        $_SESSION['flash'][$type] = $message;
     }
 

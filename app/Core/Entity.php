@@ -12,7 +12,7 @@ abstract class Entity{
     public const RULE_MATCH      = 'match';
     public const RULE_UNIQUE     = 'unique';
     
-    protected array $rules       = [];
+    public array $rules       = [];
     protected array $errors      = [];
 
     /*  Implement  Manager related properties in child class
@@ -21,11 +21,7 @@ abstract class Entity{
         private const PRIMARY_KEY = '';
         //private const FOREIGN_KEYS = ['']; */
     abstract public function __construct();
-         /* if(!self::$manager){
-         self::$manager = new Manager(self::TABLE_NAME, self::PRIMARY_KEY, ?self::FOREIGN_KEYS);
-        */
-    
-
+        //self::$manager = new Manager(self::TABLE_NAME, self::PRIMARY_KEY, ?self::FOREIGN_KEYS);
 
     //Flexible instance construction  methods
     public function populate($data): void{
@@ -33,55 +29,46 @@ abstract class Entity{
             //check if data key matches called class property
             if(property_exists($this,$key)){
                 // affect object property with associated value
-                $this->{$key} = $value;
+                $this->{$key} = $value ?? '';
             }
         }
-    } 
-    public static function newInstanceFromPrimaryKey(string $valueOnPK): object{
-        $class = get_called_class();
-
-        $manager = $class::$manager;
-        $recordData = $manager::selectOne([$manager->primaryKey => $valueOnPK]);
-        
-        $newInstance = new $class();
-        $newInstance->populate($recordData);
-        
-        return $newInstance;
     }
     protected static function newInstanceFromObject(object $object): object{
         $class = get_called_class();
         $newInstance = new $class();
         $newInstance->populate(get_object_vars($object));
-        
         return $newInstance;
     }
 
     //Manager related methods
     abstract static protected function uniqueAttributes(): array;
     abstract static protected function requiredAttributes(): array;
-    abstract static protected function allAttributes(): array;
-    protected static function tableize(Entity $entity, array $attributes){
-        
-        $sql_params = array_map(fn($attr) =>":$attr", $attributes);
-        $sql_data = [];
-        foreach($attributes as $attribute){
-            $sql_data[$attribute] = $entity->{$attribute};
-        };
-        
-        return (object)['attributes' => $attributes,'params' => $sql_params,'data' => $sql_data];
+    abstract static protected function editableAttributes(): array;
+    public function entityToArrayOn(array $attributes): array{
+        $array = [];
+        foreach(get_object_vars($this) as $key => $value){
+            if(in_array($key,$attributes)){
+                $array[$key] = $value;
+            }
+        }
+        return $array;
     }
     
     //Object basic behaviours
-    public static function show($value, $attribute = null): object{
-        $manager = get_called_class()::$manager;
+    public function show(string $value, $attribute = null): object{
+        $class = get_class($this);
         if(!$attribute){
-            $attribute = $manager->primaryKey;
+            $attribute = $class::PRIMARY_KEY;
         }
-        $record = $manager::selectOne([$attribute => $value]);
-        return self::newInstanceFromObject($record);
+        $record = $class::$manager->selectOne([$attribute => $value]);
+        return $class::newInstanceFromObject($record);
     }
-
-
+    public function delete(string $valueOnPk): void{
+        $class = get_class($this);
+        $attribute = $class::PRIMARY_KEY;
+        
+        $class::$manager->delete([$attribute => $valueOnPk]);
+    }
 
     // Form handdling
     ////// Form display

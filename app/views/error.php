@@ -1,2 +1,2 @@
-<h1><?=$exception->getCode()?></h1>
-<h2><?=$exception->getMessage()?></h2>
+<h1><?=$exception->getMessage()?></h1>
+<a href="<?=$exception->redirectLink?>"><?=$exception->redirectLinkTitle ?></a>

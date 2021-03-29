@@ -11,31 +11,31 @@ $config =[
         'dsn' =>$_ENV['DB_DSN'],
         'user' =>$_ENV['DB_USER'],
         'password' =>$_ENV['DB_PASSWORD'],
-    ],
-    'userEntity' => Project\Entities\User::class,
+    ]
 ];
 $app = new Application(dirname(__DIR__),$config);
 
 
 // Pages
-$app->router->get('/','home');
-// User related pages
-$app->router->get('/se-connecter', [AuthController::class, 'login']);
-$app->router->get('/s-inscrire', [AuthController::class, 'register']);
-$app->router->get('/mon-profil', [AuthController::class, 'profile']);
+$app->router->get('/',[PagesController::class, 'home']);
+$app->router->get('/se-connecter', [PagesController::class, 'login']);
+$app->router->get('/s-inscrire', [PagesController::class, 'register']);
 
-// Posts related pages
+// Connected user restricted access pages
+$app->router->get('/mon-compte', [AuthController::class, 'profile']);
+$app->router->get('/modifier-mon-compte', [AuthController::class, 'edit']);
 $app->router->get('/publier', [PostController::class, 'create']);
 $app->router->get('/mes-posts', [PostController::class, 'published']);
 $app->router->get('/modifier-post/{id}', [PostController::class, 'update']);
 $app->router->get('/supprimer-post/{id}', [PostController::class, 'delete']);
 
 // Actions
-// User related actions
-$app->router->post('/se-connecter', [AuthController::class, 'login']);
-$app->router->post('/s-inscrire', [AuthController::class, 'register']);
+$app->router->post('/se-connecter', [PagesController::class, 'login']);
+$app->router->post('/s-inscrire', [PagesController::class, 'register']);
+
+//  Connected user restricted actions
+$app->router->post('/modifier-mon-compte', [AuthController::class, 'edit']);
 $app->router->post('/se-deconnecter', [AuthController::class, 'logout']);
-// Post related actions
 $app->router->post('/publier', [PostController::class, 'create']);
 $app->router->post('/modifier-post/{id}', [PostController::class, 'update']);
 

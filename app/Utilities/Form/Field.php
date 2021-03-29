@@ -23,7 +23,6 @@ class Field{
     }
     
     public function __toString(){
-        //Magic function displays folloing string whenever instance is returned
         return sprintf('
         <div>
             <label>%s</label>
@@ -34,7 +33,7 @@ class Field{
         </div>
         ', $this->entity->getLabel($this->attribute),
         $this->type,
-        $this->attribute,
+        $this->attribute ?? '',
         $this->type !== self::TYPE_PASSWORD ? $this->entity->{$this->attribute} : '',
         $this->entity->hasError($this->attribute) ? ' is-invalid' : '',
         $this->entity->getFirstError($this->attribute)

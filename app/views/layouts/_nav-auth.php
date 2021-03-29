@@ -15,13 +15,13 @@ use Project\Core\Application;
     </a>
 </li>
 <li class="nav-item mx-2">
-    <?php $form = Project\Utilities\Form\Form::begin('/se-deconnecter', "POST")?>
-        <button type="submit" name="submit" class="btn btn-outline-primary">
+    <?php $form = Project\Utilities\Form\Form::begin('POST','signout','/se-deconnecter')?>
+        <button type="submit" id="<?=$form->id?>" class="outline-none">
             <i class="fas fa-power-off" aria-label="se déconnecter"></i>
         </button>    
-    <?php Project\Utilities\Form\Form::end()?>
+    <?= $form::end()?>
 </li>
 <li class="nav-item mx-2">
-    <a href="/mon-compte" class="nav-link btn btn-primary"><?= Application::$app->user->username?></a>
+    <a href="/mon-compte" class="nav-link btn btn-primary"><?= Application::$app->session->get('username')?></a>
 </li>
                   

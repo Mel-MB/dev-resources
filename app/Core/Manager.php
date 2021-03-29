@@ -2,33 +2,38 @@
 namespace Project\Core;
 use  Project\Core\{Application,Entity};
 
-abstract class Manager{
-    private string $tableName;
-    public string $primarykey;
-    public array $foreignKeys;
+class Manager{
+    private static string $tableName;
+    public static string $primarykey;
+    public static array $foreignKeys;
 
-    protected function __construct(string $tableName,string $primarykey,array $foreignKeys =[]){
-        $this->tableName = $tableName;
-        $this->primarykey = $primarykey;
-        $this->foreignKeys = $foreignKeys;
+    public function __construct(string $tableName,string $primarykey,array $foreignKeys =[]){
+        self::$tableName = $tableName;
+        self::$primarykey = $primarykey;
+        self::$foreignKeys = $foreignKeys;
     }
     
-    public function create(object $sqlEntity){
-        try{
-            $tableName = $this->tableName;
+    public function create(array $entity){
+        $tableName  = self::$tableName;
+        $attributes = array_keys($entity);
+        $params = array_map(fn($attr) => ":$attr", $attributes);
+        $request = self::prepare(
+            "INSERT INTO $tableName (".implode(',',$attributes).") 
+            VALUES (".implode(',',$params).")");
+        $request->execute($entity);
             
-            $request = self::prepare(
-                "INSERT INTO $tableName (".implode(',',$sqlEntity->attributes).") 
-                VALUES (".implode(',',$sqlEntity->params).")");
-                $request->execute($sqlEntity->data);
-                
-            return true;
-        }catch(\PDOException $e){
-            var_dump($e->getMessage());
-            return false;
-        }
+        return true;
     }
     
+    public function selectOne(array $where){
+        $tableName = self::$tableName;
+        $sql_condition = implode(" AND ", self::arrayToSqlAssoc($where));
+        
+        $request = self::prepare("SELECT * FROM  $tableName  WHERE  $sql_condition");
+        $request->execute($where);
+        return $request->fetchObject();
+        
+    }
     public function selectAll(){
         $tableName = $this->tableName;
         
@@ -36,22 +41,17 @@ abstract class Manager{
         $request->execute();
         
         return $request->fetchAll();
-        
-    }
-    
-    public function selectOne(array $where){
-        $tableName = $this->tableName;
-        
-        $attributes = array_keys($where);
-        $sql_condition = implode(" AND ", array_map(fn($attr) => "$attr = :$attr", $attributes));
-        
-        
-        $request =  self::prepare("SELECT * FROM  $tableName  WHERE  $sql_condition");
-        $request->execute($where);
-        return $request->fetchObject();
-        
     }
 
+    public function update(array $entity,array $where){
+        $tableName = self::$tableName;
+        $data = implode(", ", self::arrayToSqlAssoc($entity));
+        $sql_condition = implode(" AND ", self::arrayToSqlAssoc($where));
+
+        $request = self::prepare("UPDATE $tableName SET $data WHERE $sql_condition");
+        $request->execute($entity + $where);
+        return $request;
+    }
     /** Most probably a bad idea to keep the delete one public
      * TODO make it protected and implement a public function to define authorizations to delete
      *
@@ -72,6 +72,11 @@ abstract class Manager{
     
     protected static function prepare($request){
         return Application::$app->db::$pdo->prepare($request);
+    }
+
+    protected static function arrayToSqlAssoc(array $array): array{
+        $attributes = array_keys($array);
+        return array_map(fn($attr) => "$attr = :$attr", $attributes);
     }
 
 }

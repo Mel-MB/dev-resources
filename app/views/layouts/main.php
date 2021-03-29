@@ -1,8 +1,5 @@
-<?php
+<?php use Project\Core\Application; ?>
 
-use Project\Core\Application;
-
-?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>

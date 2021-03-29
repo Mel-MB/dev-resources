@@ -11,9 +11,9 @@ class Router {
     public Response $response;
     protected array $routes = [];
 
-    public function __construct(Request $request, Response $response){
-        $this->request = $request;
-        $this->response = $response;
+    public function __construct(){
+        $this->request = new Request();
+        $this->response = new Response();
     }
 
     public function get($path, $callback){
@@ -41,15 +41,13 @@ class Router {
         //Call the appropriate function if the callback is an array
         if (is_array($callback)){
             //create a callable Controller instance from the called class and register it as current cotroller for the app;
-            Application::$app->setController(new $callback[0]());
-            $controller = Application::$app->controller;
+            $controller = Application::$app->setController(new $callback[0]());
             $controller->action = $callback[1];
             $callback[0] = $controller;
-
+            // check if authorized
             foreach($controller->getMiddlewares() as $middleware){
                 $middleware->execute();
             }
-
             // run callback
             return call_user_func($callback, $this->request);
         }
