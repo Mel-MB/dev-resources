@@ -3,7 +3,7 @@ namespace Project\Core;
 
 use Project\Core\Database\Model;
 
-abstract class Entity extends Model{
+abstract class Entity{
     //Validation related properties
     public const RULE_REQUIRED   = 'required';
     public const RULE_ALPHANUM   = 'alphanum';
@@ -14,17 +14,12 @@ abstract class Entity extends Model{
     public const RULE_MATCH      = 'match';
     public const RULE_UNIQUE     = 'unique';
     
+    
     public array $rules       = [];
     protected array $errors      = [];
 
-    /*  Implement  Manager related properties in child class
-        protected static Manager $manager;
-        private const TABLE_NAME = '';
-        private const PRIMARY_KEY = '';
-        //private const FOREIGN_KEYS = ['']; */
-    abstract public function __construct();
-        //self::$manager = new Manager(self::TABLE_NAME, self::PRIMARY_KEY, ?self::FOREIGN_KEYS);
-
+    protected static $model;
+    
     //Flexible instance construction  methods
     public function populate($data): void{
         foreach($data as $key => $value){
@@ -43,30 +38,31 @@ abstract class Entity extends Model{
     }
     
     //Object basic behaviours
-    public function show(string $value, $attribute = null): object{
-        $class = get_class($this);
+    public function create(){
+        return self::$model::insert($this->entityToArray(self::$model::requiredAttributes()));
+    }
+    public static function show(string $value, $attribute = null): object{
+        $class = get_called_class();
+        $model = $class::$model;
         if(!$attribute){
-            $attribute = $class::PRIMARY_KEY;
+            $attribute = $model::$primary_key;
         }
-        $record = $class::$manager->selectOne([$attribute => $value]);
+        $record = $model::selectOne([$attribute => $value]);
         return $class::newInstanceFromObject($record);
     }
-    public function delete(string $valueOnPk): bool{
-        $class = get_class($this);
-        $attribute = $class::PRIMARY_KEY;
-        
-        $class::$manager->delete([$attribute => $valueOnPk]);
+    public function delete(): bool{
+        $attribute = self::$model::$primary_key;
+        $value = $this->{$attribute};
+
+        return self::$model::deleteOn([$attribute => $value]);
     }
     // Model interaction
     protected function entityToArray(array $attributes = null): array{
-        if(!$attributes) $attributes = get_class($this)::$model->editableAttributes();
+        if(!$attributes) $attributes = get_class($this)::$model::editableAttributes();
         $array = [];
 
-        foreach(array($this) as $key => $value){
-            if(preg_match('/^( \* )/', $key)) $key = substr($key,4);
-            if(in_array($key,$attributes)){
-                $array[$key] = $value;
-            }
+        foreach($attributes as $attr){
+            $array[$attr] = $this->{$attr};
         }
         return $array;
     }
@@ -112,10 +108,10 @@ abstract class Entity extends Model{
                     $this->addError($attribute, self::RULE_MATCH, $rule);
                 }
                 if($ruleName === self::RULE_UNIQUE){
-                    $manager = get_called_class()::manager();
+                    $model = get_called_class()::$model;
                     $uniqueAttr = $rule['attribute'] ?? $attribute;
                     
-                    $alreadyExists = $manager->selectOne([$uniqueAttr => $value]);
+                    $alreadyExists = $model::selectOne([$uniqueAttr => $value]);
                     if($alreadyExists){
                         $this->addError($attribute, self::RULE_UNIQUE, ['field'=> strtolower($this->getLabel($attribute))]);
                     }

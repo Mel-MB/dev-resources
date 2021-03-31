@@ -5,20 +5,9 @@ namespace Project\Models;
 use Project\Core\Database\Model;
 
 class User extends Model{
-    private const TABLE_NAME                = 'tags';
-    protected const PRIMARY_KEY             = 'id';
-    private const RELATIONNAL_TABLE       = [
-        'tableName' => 'posts_tags',
-        'foreignKeys'=> [
-            'post_id' => ['posts' => 'id'],
-            'tag_id' => ['tags' => 'id'],
-        ]
-    ];
+    protected static string $table_name     = 'users';
+    public static string $primary_key       = 'id';
 
-    public function __construct(string $tableName = null){
-        self::$tableName = self::TABLE_NAME;
-        self::$primaryKey = self::PRIMARY_KEY;
-    }
     public static function uniqueAttributes(): array {
         return ['username', 'email'];
     }

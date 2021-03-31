@@ -6,7 +6,7 @@ class Request {
     //Translate requested path to url
     public static function getUrl(){
         //Get requested path : if none specified return main domain
-        $uri = $_SERVER['REQUEST_URI'] ;
+        $uri = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
         if(!$uri) return '/';
 
         // Remove traditionnal $_GET params for security (app does not use it)
@@ -14,18 +14,7 @@ class Request {
         if ($position !== false) {
             $uri = substr($uri, 0, $position);
         }
-        // GET the passed params
-        if(preg_match_all('/\/([^\/]*)/',$uri,$sections)){
-            if(sizeof($sections[1]) === 1) return $sections[1][0];
-            $i= 2;
-            $params= [];
-            while($i === $sections[1][$i]){
-                $param = htmlspecialchars($sections[1][$i]);
-                //remove invalid chars that might be passed in url   
-                $params[gettype($param)] = $param;
-            }
-        }
-        return [$uri, $params ?? null];
+        return $uri;
     }
 
     //Get server request method

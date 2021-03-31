@@ -3,72 +3,64 @@ namespace Project\Core\Database;
 use  Project\Core\{Application,Entity};
 
 abstract class Model{
-    protected static string $tableName;
-    protected static string $primaryKey;
+    protected static string $table_name;
+    public static string $primary_key;
+    public static array $foreign_keys;
 
-    public function __construct(string $tableName, string $primarykey = null, array $foreignKeys = null, object $relationnalTable = null){
-        self::$tableName = $tableName;
-        if($primarykey) self::$primaryKey = $primarykey;
-    }
     
-    public function insert(array $entity){
-        $tableName  = self::$tableName;
+    public static function insert(array $entity){
+        $table = get_called_class()::$table_name;
         $attributes = array_keys($entity);
         $params = array_map(fn($attr) => ":$attr", $attributes);
 
         $request = self::prepare(
-            "INSERT INTO $tableName (".implode(',',$attributes).") 
+            "INSERT INTO $table (".implode(',',$attributes).") 
             VALUES (".implode(',',$params).")");
         $request->execute($entity);
         return true;
     }
-    
     public static function selectOne(array $where){
-        $tableName = get_called_class()::$tableName;
+        $table = get_called_class()::$table_name;
+        
         $sql_condition = implode(" AND ", self::arrayToSqlAssoc($where));
         
-        $request = self::prepare("SELECT * FROM  $tableName  WHERE  $sql_condition");
+        $request = self::prepare("SELECT * FROM  $table  WHERE  $sql_condition");
         $request->execute($where);
         return $request->fetchObject();
         
     }
     public static function selectAll(){
-        $tableName = get_called_class()::$tableName;
+        $table = get_called_class()::$table_name;
         
-        $request = self::prepare("SELECT * FROM $tableName");
+        $request = self::prepare("SELECT * FROM $table");
         $request->execute();
         
         return $request->fetchAll();
     }
-
-    public function updateWhere(array $entity,array $where){
-        $tableName = self::$tableName;
-        $attributes = array_keys($entity);
+    public static function updateWhere(array $entity,array $where){
+        $table = get_called_class()::$table_name;
         $data = implode(", ", self::arrayToSqlAssoc($entity));
-        $sql_condition = implode(" AND ", self::arrayToSqlAssoc($where));
+        $sql_condition = implode(" AND ", $where);
 
-        $request = self::prepare("UPDATE $tableName SET $data WHERE $where");
+        $request = self::prepare("UPDATE $table SET $data WHERE $sql_condition");
         $request->execute($entity);
         return $request;
     }
-
     public static function deleteOn($where): bool{
         $class = get_called_class();
-        $tableName = $class::$tableName;
+        $table = $class::$table_name;
 
         if(is_array($where)){
             $sql_condition = implode(" AND ", self::arrayToSqlAssoc($where));
         }elseif(is_string($where)){
-            $primaryKey = $class::$primaryKey;
+            $primaryKey = $class::$primary_key;
             $sql_condition = "$primaryKey = :$where";
-            $where[$primaryKey] = $where;
         }else{
             return false;
         }
         
-        $query = "DELETE FROM $tableName WHERE $sql_condition";
-        $request = self::prepare($query);
-        $request->execute($where);
+        $request = self::prepare("DELETE FROM $table WHERE $sql_condition");
+        $request->execute();
         
         return true;
     }
@@ -83,7 +75,7 @@ abstract class Model{
     
     // Sql helper methods
     protected static function arrayToSqlAssoc(array $attributes): array{
-        return array_map(fn($attr) => "$attr = :$attr", $attributes);
+        return array_map(fn($attr) => "$attr = :$attr", array_keys($attributes));
     }
     protected static function prepare($request){
         return Application::$app->db::$pdo->prepare($request);

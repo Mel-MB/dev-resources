@@ -15,9 +15,10 @@ class Application{
     public function __construct(string $rootPath,array $config){
         self::$ROOT_DIR     = $rootPath;
         self::$app          = $this; //allows to call actual instance of class app anywhere
-        $this->router       = new Router();
+        $this->router       = new Router($config['controllers']);
         $this->db           = new Database($config['db']);
-        $this->session      = new Session();
+        $this->session      = new Session;
+        $this->controller   = new Controller;
     }
 
     // Instantiation methods    
@@ -32,12 +33,11 @@ class Application{
         } catch( \Exception $e) {
             if($e->getCode() === 404){
                 $this->router->response->setStatusCode($e->getCode());
-                $this->setController(new Controller());
                 echo $this->controller->render('error', ['exception' => $e]);
                 exit;
             }
             Application::$app->session->setFlash('error',$e->getMessage());
-            header("Location: ".$e->redirectLink);
+            header("Location: /");
         }
     }
 

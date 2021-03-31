@@ -2,7 +2,6 @@
 
 namespace Project\Entities;
 
-use Error;
 use Project\Core\{Application, Entity};
 use Project\Models\Post as PostModel;
 
@@ -13,15 +12,21 @@ class Post extends Entity{
     public array $tags                  = [];
     public int $user_id                 = 0;
 
-    // Manager related properties
-    protected static PostModel $model;
+    protected const MODEL_NAME   = PostModel::class;
 
     public function __construct(){
-        self::$model = new \Project\Models\Post();
         if(!Application::$app->isGuest()){
             $this->user_id = Application::$app->session->get('id');
         } 
     }
 
+    
 
+    // Form handdling
+    protected function labels(): array{
+        return [
+            'content' => 'Message',
+            'tags' => 'Catégorie(s)'
+        ];
+    }
 }

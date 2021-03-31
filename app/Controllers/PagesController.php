@@ -29,11 +29,10 @@ class PagesController extends Controller{
                     Application::$app->session->setFlash('success', "Vous êtes connecté");
                     header('Location: /');
                     exit;
-                } else {
-                    Application::$app->session->setFlash('error', "Pseudo ou mot de passe incorrect");
                 }
-            }    
-        }
+                Application::$app->session->setFlash('error', "Pseudo ou mot de passe incorrect");
+            }
+        }    
         
         // Page data
         $data = [
@@ -58,15 +57,13 @@ class PagesController extends Controller{
             $user->populate($request->getData());
 
             if ($user->validate()){
-                try{
-                    $user->create();
+                if($user->create()){
                     Application::$app->session->setFlash('success', 'Vous êtes inscrit');
                     header('Location: /se-connecter');
                     exit;
-                }catch(\Exception $e){
-                    Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard");
                 }
-            }
+                Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard");
+            }           
         }
 
         // Page data

@@ -17,8 +17,7 @@ class AuthController extends Controller{
     }
     public function profile(){
         //Get user account infos
-        $user = new User;
-        $user = $user->show(Application::$app->session->get('id'));
+        $user = User::show(Application::$app->session->get('id'));
 
         // Page data
         $data = [
@@ -29,7 +28,7 @@ class AuthController extends Controller{
 
         return $this->render('front/userAccount',$data);
     }
-    public function accountEdit(Request $request){
+    public function edit(Request $request){
         //Get user account infos
         $user = new User;
         $user = $user->show(Application::$app->session->get('id'));
@@ -60,7 +59,7 @@ class AuthController extends Controller{
 
         return $this->render('front/userEditAccount',$data);
     }
-    public function accountDelete(){
+    public function delete(){
         $user = new User;
         if(!$user->delete()){
             // User Feedback

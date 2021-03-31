@@ -23,22 +23,14 @@ class User extends Entity{
 
     // Manager related properties
     protected static $model             = UserModel::class;
-    private const TABLE_NAME            = 'users';
-    protected const PRIMARY_KEY         = 'id';
-        
+    
     public function __construct(){
-        self::$model = new UserModel(self::TABLE_NAME, self::PRIMARY_KEY);
         if(!Application::$app->isGuest()){
             $this->id = Application::$app->session->get('id');
         } 
     }
 
     //Object specific behaviours
-    public function create(): bool{
-        $this->password = password_hash($this->password, PASSWORD_DEFAULT);
-
-        return self::$model->insert($this->entityToArray(self::$model::requiredAttributes()));
-    }
     public function connect(): bool{
         $db_record = self::$model::selectOne(['username' => $this->username]);
 
@@ -48,9 +40,14 @@ class User extends Entity{
         }
         return false;
     }
-    public function update(): bool{
+    public function create(): bool{
+        $this->password = password_hash($this->password, PASSWORD_DEFAULT);
+
+        return self::$model::insert($this->entityToArray(self::$model::requiredAttributes()));
+    }
+    public function update(){
         // Check if any changes were made on unique attributes
-        foreach(self::uniqueAttributes() as $attribute){
+        foreach(self::$model::uniqueAttributes() as $attribute){
             if($this->{$attribute} !== Application::$app->session->get($attribute)){
                 if(self::$model::selectOne([$attribute => $this->{$attribute}])){
                     Application::$app->session->setFlash('error','Un compte exite déjà avec votre nouveau '.$this->labels()[$attribute].'.');
@@ -60,11 +57,7 @@ class User extends Entity{
             }
         }
         // Update db record
-        return self::$model->updateWhere($this->entityToArray(self::$model::editableAttributes()),['id'=> $this->id]);
-    }
-    public function delete($valueOnPk = null): bool{
-        $id = Application::$app->session->get('id');
-        return self::$model::deleteOn($id);
+        return self::$model::updateWhere($this->entityToArray(self::$model::editableAttributes()),['id'=> $this->id]);
     }
         
     // Form handdling

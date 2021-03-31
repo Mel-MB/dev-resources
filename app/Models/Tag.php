@@ -6,7 +6,7 @@ use Project\Core\Database\Model;
 
 class Tag extends Model{
     protected static Model $relationnalTable;
-    
+
     private const TABLE_NAME                = 'tags';
     protected const PRIMARY_KEY             = 'id';
     protected const RELATIONNAL_TABLE_NAME  = [
@@ -17,10 +17,8 @@ class Tag extends Model{
         ]
     ];
 
-    public function __construct(string $tableName = null){
-        self::$tableName = self::TABLE_NAME;
-        self::$primaryKey = self::PRIMARY_KEY;
-        self::$relationnalTable = new Manager(self::RELATIONNAL_TABLE['tableName'],self::RELATIONNAL_TABLE['foreignKeys']);
+    public function __construct(){
+        parent::__construct(self::TABLE_NAME,self::PRIMARY_KEY);
     }
 
     public static function create($type, $url,$user_id){
