@@ -1,6 +1,7 @@
 <?php
 namespace Project\Core;
-use  Project\Core\{Response,Request,Router,Database,Manager,Entity};
+use  Project\Core\{Router};
+use Project\Core\Database\{Database};
 use Project\Entities\User;
 
 class Application{

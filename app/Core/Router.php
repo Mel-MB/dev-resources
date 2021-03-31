@@ -6,6 +6,7 @@ use  Project\Core\{Response,Request,Controller};
 use Project\Core\Exceptions\NotFoundException;
 
 class Router {
+    private array $controllers = ['post','auth',''];
 
     public Request $request;
     public Response $response;
@@ -25,18 +26,18 @@ class Router {
 
 
     public function resolve(){
-        $path = $this->request->getUrl();
+        $app_controller = Application::$app->controller;
+        $path = $this->request::getUrl();
         $method = $this->request->method();
         //Check if there is a defined callback for this request
-        $callback = $this->routes[$method][$path] ?? false;
-
+        $callback = fitsCallback($method,$path);
+    
         if($callback === false){
             throw new NotFoundException();
         }
         //Render view if the callback is defined as a string
         if (is_string($callback)){
-            Application::$app->setController(new PagesController());
-            return Application::$app->controller->render($callback);
+            return $app_controller->$callback;
         }
         //Call the appropriate function if the callback is an array
         if (is_array($callback)){
@@ -44,6 +45,7 @@ class Router {
             $controller = Application::$app->setController(new $callback[0]());
             $controller->action = $callback[1];
             $callback[0] = $controller;
+
             // check if authorized
             foreach($controller->getMiddlewares() as $middleware){
                 $middleware->execute();
@@ -51,6 +53,17 @@ class Router {
             // run callback
             return call_user_func($callback, $this->request);
         }
+    }
+
+    private function fitsCallback(string $method, array $path){
+        if($path[1]){
+            if(preg_match_all('/\/\{(\?*[a-z]*)\s\$[a-zA-Z0-9_]*\}/',$callback,$params)){
+                
+            }
+        }
+        '/\/\$\{([\?]*[a-z0-9_]*)\}/i'
+
+        return $this->routes[$method][$path] ?? false;
     }
     
 }

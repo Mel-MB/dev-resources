@@ -1,5 +1,7 @@
 <?php
-namespace Project\Core;
+namespace Project\Core\Database;
+
+use Project\Core\Application;
 
 class Database{
     public static \PDO $pdo;

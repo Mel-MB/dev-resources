@@ -2,7 +2,8 @@
 
 namespace Project\Entities;
 
-use Project\Core\{Application,Entity, Manager};
+use Project\Core\{Application,Entity};
+use Project\Models\User as UserModel;
 
 class User extends Entity{
     // Db Columns
@@ -16,17 +17,17 @@ class User extends Entity{
     public string $discord              = '';
     public string $linkedin             = '';
     public string $codepen              = '';
-    public string $password             = '';
+    protected string $password          = '';
     // Usage property
-    public string $passwordConfirm      = '';
+    protected string $passwordConfirm   = '';
 
     // Manager related properties
-    protected static Manager $manager;
+    protected static $model             = UserModel::class;
     private const TABLE_NAME            = 'users';
     protected const PRIMARY_KEY         = 'id';
         
     public function __construct(){
-        self::$manager = new Manager(self::TABLE_NAME, self::PRIMARY_KEY);
+        self::$model = new UserModel(self::TABLE_NAME, self::PRIMARY_KEY);
         if(!Application::$app->isGuest()){
             $this->id = Application::$app->session->get('id');
         } 
@@ -36,10 +37,10 @@ class User extends Entity{
     public function create(): bool{
         $this->password = password_hash($this->password, PASSWORD_DEFAULT);
 
-        return self::$manager->create($this->entityToArrayOn($this->requiredAttributes()));
+        return self::$model->insert($this->entityToArray(self::$model::requiredAttributes()));
     }
     public function connect(): bool{
-        $db_record = self::$manager->selectOne(['username' => $this->username]);
+        $db_record = self::$model::selectOne(['username' => $this->username]);
 
         if($db_record && password_verify($this->password, $db_record->password)){
             Application::$app->session->login($db_record->id, $db_record->username, $db_record->email);
@@ -51,7 +52,7 @@ class User extends Entity{
         // Check if any changes were made on unique attributes
         foreach(self::uniqueAttributes() as $attribute){
             if($this->{$attribute} !== Application::$app->session->get($attribute)){
-                if(self::$manager->selectOne([$attribute => $this->{$attribute}])){
+                if(self::$model::selectOne([$attribute => $this->{$attribute}])){
                     Application::$app->session->setFlash('error','Un compte exite déjà avec votre nouveau '.$this->labels()[$attribute].'.');
                     return false;
                 }
@@ -59,23 +60,11 @@ class User extends Entity{
             }
         }
         // Update db record
-        return self::$manager->update($this->entityToArrayOn($this->editableAttributes()),['id'=> $this->id]);
+        return self::$model->updateWhere($this->entityToArray(self::$model::editableAttributes()),['id'=> $this->id]);
     }
-    public function delete($valueOnPk = null): void{
-        $attribute = self::PRIMARY_KEY;
-        $valueOnPk = Application::$app->session->get('id');
-        
-        self::$manager->delete([$attribute => $valueOnPk]);
-    }
-    //Manager related methods
-    protected static function uniqueAttributes(): array {
-        return ['username', 'email'];
-    }
-    protected static function requiredAttributes(): array {
-        return ['username', 'email', 'promotion', 'password'];
-    }
-    protected static function editableAttributes(): array {
-        return ['username', 'email', 'promotion','job', 'own_website','github','linkedin','discord','codepen'];
+    public function delete($valueOnPk = null): bool{
+        $id = Application::$app->session->get('id');
+        return self::$model::deleteOn($id);
     }
         
     // Form handdling

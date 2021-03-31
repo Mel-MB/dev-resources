@@ -1,7 +1,9 @@
 <?php
 namespace Project\Core;
 
-abstract class Entity{
+use Project\Core\Database\Model;
+
+abstract class Entity extends Model{
     //Validation related properties
     public const RULE_REQUIRED   = 'required';
     public const RULE_ALPHANUM   = 'alphanum';
@@ -39,20 +41,6 @@ abstract class Entity{
         $newInstance->populate(get_object_vars($object));
         return $newInstance;
     }
-
-    //Manager related methods
-    abstract static protected function uniqueAttributes(): array;
-    abstract static protected function requiredAttributes(): array;
-    abstract static protected function editableAttributes(): array;
-    public function entityToArrayOn(array $attributes): array{
-        $array = [];
-        foreach(get_object_vars($this) as $key => $value){
-            if(in_array($key,$attributes)){
-                $array[$key] = $value;
-            }
-        }
-        return $array;
-    }
     
     //Object basic behaviours
     public function show(string $value, $attribute = null): object{
@@ -63,13 +51,25 @@ abstract class Entity{
         $record = $class::$manager->selectOne([$attribute => $value]);
         return $class::newInstanceFromObject($record);
     }
-    public function delete(string $valueOnPk): void{
+    public function delete(string $valueOnPk): bool{
         $class = get_class($this);
         $attribute = $class::PRIMARY_KEY;
         
         $class::$manager->delete([$attribute => $valueOnPk]);
     }
+    // Model interaction
+    protected function entityToArray(array $attributes = null): array{
+        if(!$attributes) $attributes = get_class($this)::$model->editableAttributes();
+        $array = [];
 
+        foreach(array($this) as $key => $value){
+            if(preg_match('/^( \* )/', $key)) $key = substr($key,4);
+            if(in_array($key,$attributes)){
+                $array[$key] = $value;
+            }
+        }
+        return $array;
+    }
     // Form handdling
     ////// Form display
     abstract protected function labels(): array;

@@ -2,20 +2,26 @@
 
 namespace Project\Entities;
 
-use Project\Core\{Application,Entity};
+use Error;
+use Project\Core\{Application, Entity};
+use Project\Models\Post as PostModel;
 
 class Post extends Entity{
-    const MANAGER = Project\Managers\Post::class;
+    // Db Columns
+    public int $id                      = 0;
+    public string $content              = '';
+    public array $tags                  = [];
+    public int $user_id                 = 0;
 
-    public int $id = 0;
-    public string $content ='';
-    public array $tags = [];
+    // Manager related properties
+    protected static PostModel $model;
 
-    protected function manager(){
-        return self::MANAGER;
+    public function __construct(){
+        self::$model = new \Project\Models\Post();
+        if(!Application::$app->isGuest()){
+            $this->user_id = Application::$app->session->get('id');
+        } 
     }
 
-    protected static function requiredAttributes(): array{
-        return ['content', 'tags'];
-    }
+
 }

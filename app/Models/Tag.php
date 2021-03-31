@@ -1,11 +1,27 @@
 <?php
 
-namespace Project\Managers;
+namespace Project\Models;
 
-use Project\Core\Manager;
+use Project\Core\Database\Model;
 
-class Social extends Manager {
-    const TABLE_NAME = 'socials';
+class Tag extends Model{
+    protected static Model $relationnalTable;
+    
+    private const TABLE_NAME                = 'tags';
+    protected const PRIMARY_KEY             = 'id';
+    protected const RELATIONNAL_TABLE_NAME  = [
+        'tableName' => 'posts_tags',
+        'foreignKeys'=> [
+            'post_id' => ['posts' => 'id'],
+            'tag_id' => ['tags' => 'id'],
+        ]
+    ];
+
+    public function __construct(string $tableName = null){
+        self::$tableName = self::TABLE_NAME;
+        self::$primaryKey = self::PRIMARY_KEY;
+        self::$relationnalTable = new Manager(self::RELATIONNAL_TABLE['tableName'],self::RELATIONNAL_TABLE['foreignKeys']);
+    }
 
     public static function create($type, $url,$user_id){
         //Create social

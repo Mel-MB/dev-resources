@@ -29,7 +29,7 @@ class AuthController extends Controller{
 
         return $this->render('front/userAccount',$data);
     }
-    public function edit(Request $request){
+    public function accountEdit(Request $request){
         //Get user account infos
         $user = new User;
         $user = $user->show(Application::$app->session->get('id'));
@@ -60,17 +60,21 @@ class AuthController extends Controller{
 
         return $this->render('front/userEditAccount',$data);
     }
-    public function delete(){
-        // Delete user in database
+    public function accountDelete(){
         $user = new User;
-        $user->delete();
-        // Unset session
+        if(!$user->delete()){
+            // User Feedback
+            Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard.");
+            header('Location: /modifier-mon-compte');  
+            exit();
+        }
+        // Unset connection on session
         Application::$app->session->remove();
-
+        // User Feedback
         Application::$app->session->setFlash('success', 'Vous êtes déconnecté');
         header('Location: /');
-        exit();
-        
     }
+
+
 
 }
