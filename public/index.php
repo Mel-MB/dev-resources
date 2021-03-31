@@ -27,7 +27,7 @@ $app->router->get('/s-inscrire', [PagesController::class, 'register']);
 // Connected user restricted access pages
 $app->router->get('/mon-compte', [AuthController::class, 'profile']);
 $app->router->get('/modifier-mon-compte', [AuthController::class, 'edit']);
-$app->router->get('/post/publier', "create()");
+$app->router->get('/post/publier', "create");
 $app->router->get('/mes-posts', [PostController::class, 'userPublished']);
 $app->router->get('/post/modifier/{int $id}', 'update');
 

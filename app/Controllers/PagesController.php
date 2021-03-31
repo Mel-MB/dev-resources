@@ -50,7 +50,7 @@ class PagesController extends Controller{
             'email' => [User::RULE_REQUIRED, User::RULE_EMAIL,User::RULE_UNIQUE],
             'promotion' => [User::RULE_REQUIRED, User::RULE_YEAR],
             'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]],
-            'passwordConfirm' => [User::RULE_REQUIRED, [User::RULE_MATCH, 'match'=> 'password']]
+            'password_confirm' => [User::RULE_REQUIRED, [User::RULE_MATCH, 'match'=> 'password']]
         ];
         
         if($request->isPost()){

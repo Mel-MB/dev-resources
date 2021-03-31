@@ -4,13 +4,13 @@ use Project\Core\Application;
 ?>
 
 <li class="nav-item mx-2">
-    <a href="/nouveau-partage" class="nav-link">
+    <a href="/post/publier" class="nav-link">
         <i class="fas fa-plus"></i>
     </a>
 </li>
 
 <li class="nav-item mx-2">
-    <a href="/mes-partages" class="nav-link">
+    <a href="/mes-posts" class="nav-link">
         <i class="fas fa-newspaper"></i>
     </a>
 </li>

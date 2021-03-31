@@ -23,9 +23,9 @@
                 </a>
                 <ul class="navbar-nav flex-row ml-auto">
                     <?php if(Application::$app->isGuest()){
-                        require_once('_nav-guest.php');
+                        require_once('_navGuest.php');
                     }else{
-                        require_once('_nav-auth.php');
+                        require_once('_navAuth.php');
                     }?>
                 </ul>
             </nav>
@@ -47,5 +47,6 @@
             <p>&copy <a href="https://github.com/Mel-MB">Mel MB</a> _ Greta 2021</p>
         </div>
     </footer>
+    <script src="<?= Application::$ROOT_DIR.'\app\source\js\main.js'?>"></script>
 </body>
 </html>

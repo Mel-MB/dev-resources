@@ -6,10 +6,13 @@ use Project\Core\Application;
 use Project\Core\Controller;
 use Project\Core\Request;
 use Project\Entities\Post;
+use Project\Middlewares\AuthMiddleware;
 
 class PostsController extends Controller{
+    public function __construct(){
+        $this->registerMiddleware(new AuthMiddleware(['list','userPublished']));
+    }
 
-    // Posts
     public function list(){
         //Retrieve all posts
         $posts= Post::all();
@@ -50,7 +53,7 @@ class PostsController extends Controller{
             'post' => $post
         ];
         
-        return $this->render('front/postForm',$data);
+        return $this->render('front/_postForm',$data);
     }
     public function userPublished(){
         $user_posts = Post::fromUser();

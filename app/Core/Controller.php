@@ -5,6 +5,10 @@ class Controller{
     public string $action = '';
     protected array $middlewares = [];
 
+    private string $title = 'Partage de ressources Kercode';
+    private string $description = 'Le blog de partage et classification de ressources de étudiants de Kercode';
+
+
     // View rendering methods
     public function render($view, $data = []): string{
         $layoutContent = $this->renderLayout($data['title']??null, $data['description']??null);
@@ -23,8 +27,8 @@ class Controller{
         return ob_get_clean();
     }
     private function renderLayout($title, $description): string{
-        if(!$title) $title = 'Partage de ressources Kercode';
-        if(!$description) $description = 'Le blog de partage et classification de ressources de étudiants de Kercode';
+        if(!$title) $title = $this->title;
+        if(!$description) $description = $this->description;
         ob_start();
         include_once Application::$ROOT_DIR."/app/views/layouts/main.php";
         return ob_get_clean();

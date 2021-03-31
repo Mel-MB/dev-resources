@@ -18,7 +18,13 @@ class Form{
     public static function end(): string{
         return '</form>';
     }
-    public static function field(Entity $entity, string $attribute){
-        return new Field($entity, $attribute);
+    public static function input(Entity $entity, string $attribute, string $input_type){
+        return new Input($entity, $attribute,$input_type);
+    }
+    public static function textarea(Entity $entity, string $attribute){
+        return new Textarea($entity, $attribute);
+    }
+    public static function tagInput(Entity $entity){
+        return new TagInput($entity);
     }
 }

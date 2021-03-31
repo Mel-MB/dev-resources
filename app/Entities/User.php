@@ -19,7 +19,7 @@ class User extends Entity{
     public string $codepen              = '';
     protected string $password          = '';
     // Usage property
-    protected string $passwordConfirm   = '';
+    protected string $password_confirm   = '';
 
     // Manager related properties
     protected static $model             = UserModel::class;
