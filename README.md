@@ -5,6 +5,7 @@
 <p>A post organizer to help resource sharing between classmates</p>
     <a href="#">Visit the app</a> - <a href="https://github.com/Mel-MB/sharecodes/issues">Request a feature</a> - <a href="https://github.com/Mel-MB/sharecodes/issues">Report a bug</a>
 </center>
+
 <!-- About the app-->
 
 ## About the project 
@@ -21,19 +22,23 @@ This app was born for my training validation. The idea came from a need to keep 
 
 ## Getting started
 
-This project is **open source**. Feel free to contribute and [report issues](https://github.com/Mel-MB/sharecodes/issues).
+This is an open source project. Feel free to contribute and [report issues](https://github.com/Mel-MB/sharecodes/issues).
+
 
 ### Setup
 
 ```
 https://github.com/Mel-MB/sharecodes.git
 cd sharecodes
+composer install
+=======
 composer update
-```
+
 
 ### Contributing
 
-This is initially a school project : his purpose is mainly educational. 
+
+This a school project, his purpose is mainly educational. 
 
 Any contributions are highly appreciated. 
 
@@ -46,3 +51,4 @@ How to proceed:
 3. Commit your Changes (`git commit -m 'Add YourAwesomeFeature'`)
 4. Push to the Branch (`git push origin feature/YourFeatureName`)
 5. Open a Pull Request
+

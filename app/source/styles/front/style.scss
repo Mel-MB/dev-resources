@@ -3,7 +3,6 @@ $secondary: #282828;
 $light: #EAE8DC;
 $info: #0E3746;
 
-@import "../bootstrap/scss/bootstrap";
 
 .form{
     min-height: 80vh;
@@ -30,4 +29,5 @@ $info: #0E3746;
 .main-page #articles {
     height: 80vh;
     justify-content: flex-start;
+    white-space: pre-line;
 }

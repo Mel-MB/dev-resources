@@ -60,13 +60,29 @@ class ValidationController {
     }
     
     public function is_unique(){
-        if (User::alreadyExists('pseudo',$this->getField($this->data['username']))) {
+        if (User::alreadyExists('pseudo',$this->data['username'])) {
             $this->errors['username'] = "Ce pseudo est déjà pris";
             return false;
         }
-        if (User::alreadyExists('email',$this->getField($this->data['email']))) {
+        if (User::alreadyExists('email',$this->data['email'])) {
             $this->errors['email'] = "Cet email est déjà utilisé pour un autre compte";
             return false;
+        }
+        return true;
+    }
+
+    public function unique_checks(){
+        if (User::alreadyExists('pseudo',$this->data['username'])) {
+            if($this->data['username'] != $_SESSION['pseudo']){
+                $this->errors['username'] = "Ce pseudo est déjà pris";
+                return false;
+            }
+        }
+        if (User::alreadyExists('email',$this->data['email'])) {
+            if($this->data['email'] != $_SESSION['email']){
+                $this->errors['email'] = "Cet email est déjà utilisé pour un autre compte";
+                return false;
+            }
         }
         return true;
     }

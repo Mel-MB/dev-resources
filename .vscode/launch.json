@@ -9,14 +9,8 @@
             "type": "php",
             "request": "launch",
             "stopOnEntry": true,
-            "port": 9000,
-
-        },
-        {
-            "name": "Launch currently open script",
-            "type": "php",
-            "request": "launch",
-            "program": "${workspaceRoot}\\index.php",
+            "port": 8080,
+            "program": "${workspaceRoot}/public/index.php",
             "cwd": "${workspaceRoot}"
         }
     ]
