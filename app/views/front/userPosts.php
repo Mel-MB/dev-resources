@@ -1,26 +1,25 @@
+
+
 <div class="container">
-    <div class="row">
+    <div>
         <h1><?= $title ?></h1>
     </div>
-    <div class="row">
+    <section id="articles" class="grid">
     <?php 
         foreach($user_posts as $post):?>
-        <div class="col-12 col-md-6 p-3">
-            <article class="card">
-                <div class="card-body">
-                    <p class="card-text"><?=$post->content?></p>
-                    <?php if(isset($post->link)): ?>
-                    <a href="<?= $post->link['url'];?>">
-                        <!--Display link preview-->
-                    </a>
-                    <?php endif ?>
+        <article class="card flow">
+            <div class="card-body">
+                <?php include('_postActions.php') ?>
+                <p class="card-text post"><?=$post->content?></p>
+            </div>
+            <div class="card-footer">
+                <div class = "tags">
+                    <?php foreach($post->tags as $tag): ?>
+                        <a href="/posts/<?=$tag?>" class="tag"><?=$tag?></a>
+                    <?php endforeach ?>
                 </div>
-                <div class="card-footer row justify-content-around">
-                    <a href="index.php?action=post-update&id=<?=$post->id?>" class="btn btn-outline-secondary col-3">Modifier</a>
-                    <a href="index.php?action=post-delete&id=<?=$post->id?>" class="btn btn-primary col-3">Supprimer</a>
-                </div>
-            </article>
-        </div>
+            </div>
+        </article>
     <?php endforeach; ?>
-    </div>
+    </section>
 </div>

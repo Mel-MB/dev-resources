@@ -2,93 +2,172 @@
 
 namespace Project\Models;
 
+use Project\Core\Application;
 use Project\Core\Database\Model;
 
 class Post extends Model {
-    private const TABLE_NAME                = 'posts';
-    protected const PRIMARY_KEY             = 'id';
-    protected const FOREIGN_KEYS            = ['user_id' => ['users' => 'id']];
-    protected const RELATIONNAL_TABLE       = [
-        'tableName' => 'posts_tags',
-        'foreignKeys'=> [
-            'post_id' => ['posts' => 'id'],
-            'tag_id' => ['tags' => 'id'],
-        ]
-    ];
-
-    public function __construct(string $tableName = null){
-        self::$tableName = self::TABLE_NAME;
-        self::$primarykey = self::PRIMARY_KEY;
-        self::$foreignKeys = self::FOREIGN_KEYS;
-    }    
+    protected static string $table_name                = 'posts';
+    public static string $primary_key                  = 'id';
+    public static array $foreign_keys                  = ['user_id' => ['users' => 'id']];
+    protected static string $relationnal_table         = Posts_Tags::class;   
     
-    public function insert(array $entity){
+
+    // Show
+    public static function selectOne(array $where){
+        $sql_condition = implode(" AND ", self::arrayToSqlAssoc($where));
+
+        $request = self::prepare("
+        SELECT p.*, u.username, t.name AS tags 
+        FROM `posts` p
+        INNER JOIN `users` u ON u.id = p.user_id
+        INNER JOIN posts_tags pt ON p.id = pt.post_id
+        JOIN tags t ON pt.tag_id = t.id
+        WHERE p.$sql_condition
+        ORDER BY p.id DESC");
+        
+        $request->execute($where);
+        $result = $request->fetchAll(\PDO::FETCH_GROUP);
+
+        $post = self::visualise($result);
+        return $post[0];
+    }
+    public static function selectAll(){
+        $request = self::prepare('
+            SELECT p.*, u.username, t.name AS tags 
+            FROM `posts` p 
+            INNER JOIN `users` u ON u.id = p.user_id
+            INNER JOIN posts_tags pt ON p.id = pt.post_id
+            JOIN tags t ON pt.tag_id = t.id
+            ORDER BY p.id DESC');
+        $request->execute();
+        $result = $request->fetchAll(\PDO::FETCH_GROUP);
+        return $result ? self::visualise($result) : [];
+
+    }
+    public static function selectByUser(int $user_id){
+        $request = self::prepare('
+        SELECT p.*, t.name AS tags 
+        FROM `posts` p
+        INNER JOIN posts_tags pt ON p.id = pt.post_id
+        JOIN tags t ON pt.tag_id = t.id
+        WHERE p.user_id = ?
+        ORDER BY p.id DESC');
+        $request->execute([$user_id]);
+        $result = $request->fetchAll(\PDO::FETCH_GROUP);
+        
+        return $result ? self::visualise($result) : [];
+    }
+    // Insert
+    public static function insert(array $entity){
+        try {
+            //Start SQL transaction
+            Application::$app->db::$pdo->beginTransaction();
+            // create the post
+            $request = self::prepare("INSERT INTO `posts` (content, user_id) VALUES (?,?)");
+            $request->execute([$entity['content'],$entity['user_id']]);
+            
+            $post_id = Application::$app->db::$pdo->query('SELECT LAST_INSERT_ID()');
+            $posts = $post_id->fetch(\PDO::FETCH_ASSOC);
+            
+            // Link it to tags
+            foreach($entity['tags'] as $tag){
+                //Check for existing tag
+                $record = Tag::selectOne(["name" => $tag]);
+                // Register tag
+                if(!$record){
+                    Tag::insert(["name" => $tag]);
+                    $record = Tag::selectOne(["name" => $tag]);
+                }
+                // link the tag to this post
+                self::$relationnal_table::insert(['post_id' => $posts['LAST_INSERT_ID()'],'tag_id' => $record->id]);
+            }
+
+            $result = Application::$app->db::$pdo->commit();
+          
+          } catch (\Exception $e) {
+            Application::$app->db::$pdo->rollBack();
+            $result = "Erreur: " . $e->getMessage();
+          }
+          return $result;
+    }
+    // Update
+    public static function updateWhere(array $entity,array $where){
+        $sql_condition = implode(" AND ", self::arrayToSqlAssoc($where));
+
         try {
             //Start SQL transaction
             Application::$app->db::$pdo->beginTransaction();
 
-            //Check for tags
-            $user_socials = Social::selectByUser($user_data['id']);
+            // update post content
 
-            foreach($socials_data as $type => $url){
-                
-                if($user_socials){
-                    //Loop on socials linked to this user
-                    foreach($user_socials as $social){
-                        // Check if registered social matchs with given data
-                        if($social['type'] === $type){
-                            // Update the row on matched data
-                            $matching_data = $socials_data[$social['type']];
-                            $s = new Social;
-                            $updated_social = $s->update($social['id'],$matching_data);
-                            // Go to the next iteration of the parent loop
-                            continue 2;   
-                        }
-                    }
-                }else{
-                    // Check if user filled the url
-                    if($url){
-                        $social = Social::create($type,$url,$user_data['id']);
-                    }
+            Application::$app->db::$pdo->query('SET @update_id := 0;');
+            $request = self::prepare("
+                UPDATE `posts` 
+                SET content = :content, id = (SELECT @update_id := id) 
+                WHERE $sql_condition LIMIT 1;"
+            );
+            $request->execute($where + ['content' => $entity['content']]);
+
+            // retrieve post id
+            $updated = Application::$app->db::$pdo->query('SELECT @update_id;');
+            $temp = $updated->fetch(\PDO::FETCH_ASSOC);
+
+            $tagsRecord = self::$relationnal_table::selectWhere(["post_id" => $temp['@update_id']]);
+            $tags = array_map(fn($x) => Tag::selectOne(["id" => $x->tag_id]),$tagsRecord);
+            foreach($tags as $tag){
+                // Checked for removed tag
+                if (!in_array($tag->name, $entity['tags'])){
+                    self::$relationnal_table::deleteOn(["tag_id" => $tag->id]);
                 }
-
-
-            $post = self::prepare("UPDATE `users` SET pseudo= :username, email= :email, promotion= :promotion, job= :job WHERE id= :id");
-            $post->execute($user_data);
-            
-                
+            }
+            foreach($entity['tags'] as $post_tag){
+                //Check for added tag
+                if(!in_array($post_tag, array_map(fn($tag) => $tag->name, $tags))){
+                    //Check for existing tag
+                    $record = Tag::selectOne(["name" => $post_tag]);
+                    // Register tag
+                    if(!$record){
+                        Tag::insert(["name" => $post_tag]);
+                        $record = Tag::selectOne(["name" => $post_tag]);
+                    }
+                    // link the tag to this post
+                    self::$relationnal_table::insert(['post_id' => $temp['@update_id'],'tag_id' => $record->id]);
+                }
             }
             
-            $result = $db->commit();
-          
-          } catch (\Exception $e) {
-            $db->rollBack();
+            $result = Application::$app->db::$pdo->commit();
+            
+        } catch (\Exception $e) {
+            Application::$app->db::$pdo->rollBack();
             $result = "Erreur: " . $e->getMessage();
-          }
-       
+        }
+        return $result;
         
-        return $result;
-
     }
-    public static function selectFromFK($user_id){
-        $request = self::dbConnect()->prepare('SELECT * FROM `posts` WHERE user_id= ? ORDER BY id DESC');
-        $request->execute([$user_id]);
+    
 
-        $result= $request->fetchAll();
-        return $result;
-    }
-    public static function selectAll(){
-        $request = self::prepare('SELECT p.*, u.pseudo FROM `posts` AS p INNER JOIN `users` AS u ON u.id = p.user_id ORDER BY p.id DESC');
+    // Database visualisation
+    private static function visualise(array $postsRecords){
+        $posts = [];
+        foreach($postsRecords as $post_id=>$data){
+            $tags = [];
 
-        $result = $request->fetchAll();
-        return $result;
+            // regroup tags into 1 array
+            foreach($data as $post){
+                $tags[] = $post->tags;
+                $data[0]->tags = $tags;
+                $data[0]->id = $post_id;
+            }
+            $posts[] = $data[0];
+        }
+        return $posts;
     }
-    public function update($post_id, $content){
-        $request = $this->db->prepare('UPDATE `posts` SET content= :content WHERE id= :id');
-        $request->execute([
-            'content' => $content,
-            'id' => $post_id
-        ]);
-        return $request;
+    
+    // Entity Interaction methods
+    public static function requiredAttributes(): array {
+        return ['content', 'tags', 'user_id'];
+    }
+    public static function editableAttributes(): array {
+        return ['content', 'tags'];
     }
 }

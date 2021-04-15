@@ -10,16 +10,16 @@ class User extends Entity{
     public int $id                      = 0;
     public string $username             = '';
     public string $email                = '';
-    public string $promotion            = '';
+    public $tags                        = '';
     public string $job                  = '';
     public string $own_website          = '';
     public string $github               = '';
     public string $discord              = '';
     public string $linkedin             = '';
     public string $codepen              = '';
-    protected string $password          = '';
+    public string $password             = '';
     // Usage property
-    protected string $password_confirm   = '';
+    public string $password_confirm   = '';
 
     // Manager related properties
     protected static $model             = UserModel::class;
@@ -46,6 +46,11 @@ class User extends Entity{
         return self::$model::insert($this->entityToArray(self::$model::requiredAttributes()));
     }
     public function update(){
+        if($this->tags){
+            $tags = json_decode($this->tags, true);
+            $this->tags = array_map(fn($x) => $x = $x["value"],$tags);
+        }
+
         // Check if any changes were made on unique attributes
         foreach(self::$model::uniqueAttributes() as $attribute){
             if($this->{$attribute} !== Application::$app->session->get($attribute)){
@@ -65,9 +70,9 @@ class User extends Entity{
         return [
             'username' => 'Pseudo',
             'email' => 'Email',
-            'promotion' => 'Année de certification',
+            'tags' => 'Vos organisations',
             'password' => 'Mot de passe',
-            'passwordConfirm' => 'Confirmation du mot de passe',
+            'password_confirm' => 'Confirmation du mot de passe',
             'job' => 'Poste actuel',
             'own_website' => 'Portfolio ou site personnel',
             'github' => 'Profil github',

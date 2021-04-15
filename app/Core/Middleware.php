@@ -3,7 +3,7 @@
 namespace Project\Core;
 
 abstract class Middleware{
-    private array $actions;
+    protected array $actions;
     
     public function __construct(array $actions = []){
         $this->actions = $actions;

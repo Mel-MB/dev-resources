@@ -31,7 +31,7 @@ class Request {
         if ($this->isPost()){
             foreach($_POST as $key => $value){
                 //remove invalid chars that might be passed in inputs
-                $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_FULL_SPECIAL_CHARS,FILTER_FLAG_NO_ENCODE_QUOTES);
             }
         }
         return $data;

@@ -3,17 +3,25 @@
 namespace Project\Controllers;
 
 use Project\Core\{Application, Controller, Request};
-use Project\Entities\User;
+use Project\Entities\{Post, User};
+use Project\Middlewares\AuthMiddleware;
+use Project\Models\Tag;
 
 class PagesController extends Controller{
     public function home(){
-        $data = [
-            'title' => 'Partage de ressources Kercode',
-            'description' => 'Le blog de partage et classification de ressources de étudiants de Kercode'
-        ];
-
-        return $this->render('front/home',$data);
+        // Research bar
+        $mostUsedTags = Tag::selectTop5();
+        //Retrieve all posts
+        $posts= Post::all();
+        // Page data
+         $data = [
+            'tags' => $mostUsedTags,
+            'posts' => $posts
+         ];
+         return self::render('front/home',$data);
     }
+
+
     public function login(Request $request){
         $user = new User;
         $user->rules = [
@@ -41,14 +49,14 @@ class PagesController extends Controller{
             'user' => $user,
         ];
         
-        return $this->render('front/login',$data);
+        return self::render('front/login',$data);
     }
     public function register(Request $request){
         $user = new User;
         $user->rules = [
-            'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18],User::RULE_UNIQUE],
-            'email' => [User::RULE_REQUIRED, User::RULE_EMAIL,User::RULE_UNIQUE],
-            'promotion' => [User::RULE_REQUIRED, User::RULE_YEAR],
+            'username' => [User::RULE_REQUIRED, User::RULE_ALPHANUM, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18], User::RULE_UNIQUE],
+            'email' => [User::RULE_REQUIRED, User::RULE_EMAIL, User::RULE_UNIQUE],
+            '' => [User::RULE_REQUIRED, User::RULE_YEAR],
             'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]],
             'password_confirm' => [User::RULE_REQUIRED, [User::RULE_MATCH, 'match'=> 'password']]
         ];
@@ -70,9 +78,9 @@ class PagesController extends Controller{
         $data = [
             'title' => "S'inscrire",
             'description' => "Accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
-            'entity' => $user,
+            'user' => $user,
         ];
 
-        return $this->render('front/register',$data);
+        return self::render('front/register',$data);
     }
 }

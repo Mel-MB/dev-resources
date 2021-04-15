@@ -1,15 +1,26 @@
-<main  class="container main-page">
-    <h1><?= $data['title']?></h1>
-    <section id="articles" class="d-flex flex-wrap flex-column">
+<main class="container main-page">
+    <h1><?= $title ?></h1>
+    <div class="card">
+        <div class="tags">
+            <?php foreach($tags as $tag):?>
+                <a href="/posts/<?=$tag->id?>" class="tag"><?=$tag->name?></a>
+            <?php endforeach ?>
+        </div>
+    </div>
+    <section id="articles" class="grid">
         <?php foreach($posts as $post):?>
-        <article class="col-sm-6 col-lg-4 d-inline-block p-3">
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-text"><?=$post->content?></p>
+        <article class="card flow">
+            <div class="card-body">
+                <?php if(Project\Middlewares\AuthMiddleware::canUpdateDelete($post->user_id)) include('_postActions.php');?>
+                <p class="card-text post"><?= $post->content?></p>
+            </div>
+            <div class="card-footer post-infos">
+                <div class ="tags">
+                    <?php foreach($post->tags as $tag): ?>
+                        <a href="/posts/<?=$tag?>" class="tag"><?=$tag?></a>
+                    <?php endforeach ?>
                 </div>
-                <div class="card-footer post-infos">
-                    <p class="text-muted">Posté par <?=$post->pseudo?> le <?= $post->publication = date("d/m/Y")?></p>
-                </div>
+                <p class="text-muted">Posté par <?=$post->username?> le <?= $post->publication = date("d/m/Y")?></p>
             </div>
         </article>
         <?php endforeach; ?>

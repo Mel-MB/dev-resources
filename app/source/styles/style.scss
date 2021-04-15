@@ -1,0 +1,418 @@
+/*========== RESET ==========*/
+*,
+::before,
+::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+html, body{
+    height: 100%;
+}
+body{
+    margin: $header-height+2rem 0;
+    font-family: $main-font;
+    font-size: $regular-font-size;
+    background-color: $background;
+    color: $text-primary;
+    text-align: center;
+}
+a {
+    text-decoration: none;
+    color: $dark;
+    font-weight: $font-semi-bold;
+    border-radius: .6rem;
+    -webkit-border-radius: .6rem;
+    -moz-border-radius: .6rem;
+    -ms-border-radius: .6rem;
+    -o-border-radius: .6rem;
+    padding: .3rem .5rem;
+}
+input, textarea {
+    border: 1px solid $border-light;
+    background-color: inherit;
+    outline: none;
+    display: block;
+    width: 100%;
+}
+textarea {
+    min-height: 10rem;
+}
+li {
+    list-style-type: none;
+}
+button {
+    border: none;
+    color: $dark;
+    background-color: transparent;
+    border-radius: .6rem;
+    -webkit-border-radius: .6rem;
+    -moz-border-radius: .6rem;
+    -ms-border-radius: .6rem;
+    -o-border-radius: .6rem;
+    padding: .3rem .5rem;
+}
+i{
+    font-size: $medium-font-size;
+    &::before{
+        padding: auto;
+    }
+}
+
+/*========== GENERAL CLASSES ==========*/
+.container{
+    width: 90%;
+    margin: 0 auto;
+    @media screen and (min-width: $xl){
+        width: 1200px;
+    }
+}
+.text-muted{
+    color: $dark;
+    font-size: $smaller-font-size;
+}
+.primary{
+    color: $primary;
+}
+.btn-primary{
+    background-color: $primary;
+    color: #fff;
+}
+.secondary{
+    color: $secondary;
+}
+.btn-secondary{
+    background-color: $secondary;
+    color: #fff;
+}
+.outline-secondary{
+    border:solid 2px $secondary;
+    color: $secondary;
+    font-weight: $font-semi-bold;
+}
+.alert{
+    width: 100%;
+    margin: .5rem;
+    padding: .8rem;
+    border-radius: .5rem;
+    -webkit-border-radius: .5rem;
+    -moz-border-radius: .5rem;
+    -ms-border-radius: .5rem;
+    -o-border-radius: .5rem;
+    font-weight: $font-semi-bold;
+        &-success{
+        border:solid .125rem $success;
+        color: $success;
+    }
+    &-error{
+        border:solid .125rem $warning;
+        color: $warning;
+    }
+}
+.delete{
+    color: $warning;
+}
+.card{
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+    border-radius: .4rem;
+    -webkit-border-radius: .4rem;
+    -moz-border-radius: .4rem;
+    -ms-border-radius: .4rem;
+    -o-border-radius: .4rem;
+    border:solid 1px $border-light;position: relative;
+
+    h1{
+        width: 100%;
+        border-bottom:solid 1px $border-light;
+        padding: .5rem;
+        background-color: $secondary;
+        color: $light;
+    }
+}
+/*===== MASONRY LAYOUT =====*/
+.grid { 
+    @media screen and (min-width: $m){
+        --columns: 2;
+        display: column;
+        columns: var(--columns);
+        gap: $gap;   
+        .flow {
+            break-inside: avoid;
+            margin-bottom: $gap;
+        }
+    }
+    @media screen and (min-width: $l){
+        --columns: 3;
+
+    }
+    @media screen and (min-width: $xl){
+        --columns: 4;    }
+}
+@supports (grid-template-rows: masonry){
+    .grid{
+        @media screen and (min-width: $m){
+            display: grid;
+            grid-template-columns: repeat(var(--columns), 1fr);
+            grid-template-rows: masonry;
+        }
+    }
+    .flow {
+        margin-bottom: 0;
+    }
+}
+/*===== FORMS =====*/
+.form{
+    margin: 10vh auto;
+    @media screen and(min-width: $m){
+        width: 70%;
+    }
+    form{
+        padding: 1rem;
+        
+        & > div{
+            @media screen  and (min-width: $m){
+                width: 80%;
+                margin: auto;
+            }
+        }
+        & > div:not(.field){
+            @media screen  and (min-width: $l){
+                display: flex;
+                align-items: center;
+            
+                .field{
+                    flex: 1;
+                    padding: 1.5rem; 
+                }
+            }
+        }
+        .field{
+            padding: 1.5rem 0;
+            
+            label{
+                font-size: $small-font-size;
+                width: 100%;
+            }
+            input.form-control{
+                text-align: center;
+                width: 100%;
+                
+                padding: .3rem;
+                overflow: hidden;
+                border-color: transparent;
+                border-bottom-color: $secondary;
+                transition: all .5s ease;
+                -webkit-transition: all .5s ease;
+                -moz-transition: all .5s ease;
+                -ms-transition: all .5s ease;
+                -o-transition: all .5s ease;
+                &.is-invalid{
+                    border-bottom-color: $warning;
+                }   
+                &:focus{
+                    border-bottom-color: $primary;
+                }
+                &::placeholder{
+                    color: $dark;
+                }
+            }
+            .invalid-feedback{
+                color: $warning;
+                font-size: $smaller-font-size;
+                font-weight: $font-semi-bold;
+            }
+            
+        }
+    }
+    input[type="submit"], button[type="submit"]{
+        margin : 1rem;
+        min-width: 20%;
+        padding: .5rem 1.5rem;
+        font-size: $regular-font-size;
+    };
+
+}
+/*===== POSTS =====*/
+section#articles{
+    margin: 2rem 0;
+    overflow: hidden;
+
+    // post card 
+    article{
+        &>*{
+            padding: .8rem;
+        }
+        #actions{
+            display:flex;
+            justify-content: flex-end;
+            a {
+                color: $dark;
+            }
+        }
+        .card-body{
+            .card-text{
+                padding: .7rem;
+                white-space: pre-line;
+            }
+        }
+        .card-footer{
+            border-top:solid 1px $border-light;
+            background-color: $light;
+        }                  
+    }
+}
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: .6rem;
+    
+    .tag{
+        font-size: $small-font-size;
+        padding: .1rem .6rem;
+        margin: .3rem .5rem;
+        border:solid 1px $dark;
+        color: $dark; 
+    }
+}
+/*========== PAGE CONTENT ==========*/
+/*===== NAVBAR =====*/
+header.sticky-top{
+    background-color: $light;
+    min-height: $header-height;
+    border-bottom: solid .5px $primary;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+
+    nav{
+        text-align: center;
+        margin: .5rem 0 $gap;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .navbar{
+            min-width: 80%;
+            display: flex;
+            justify-content: flex-end;
+
+            @media screen and (min-width: $m){
+                justify-content: space-around;
+            }
+
+            >*{
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+            div{
+                flex:2;
+                i{
+                    color: $secondary;
+                }
+                &:hover{
+                    background-color: $background;
+                }
+                #search{
+                    display: none;
+                    width: 80%;
+                    padding: .2rem .5rem;
+                    border: solid 1px $secondary;
+                    border-radius: .3rem;
+                    -webkit-border-radius: .3rem;
+                    -moz-border-radius: .3rem;
+                    -ms-border-radius: .3rem;
+                    -o-border-radius: .3rem;
+                    background-color: $light;
+                    input{
+                        width: 90%;
+                        outline: none;
+                        text-overflow: ellipsis;
+                        padding-left: $gap;
+                        border: none;
+                        background-color: transparent;
+                    }
+                    i{
+                        color: $secondary;
+                    }
+                    
+                }
+                @media screen and (min-width: $m){
+                    padding-left: $gap;
+                    a[title="rechercher"]{
+                        display: none;
+                    }
+                    #search{
+                        display: flex;
+                    }
+                }
+            }
+            ul{
+     
+                li{
+                    padding: auto;
+                    a, button{
+                        display: block;
+                        &.outline-secondary{
+                            color: $secondary;
+                        }   
+                    }
+                }
+            }
+        } 
+    }
+}
+/*===== CONTENT =====*/
+main{
+    #account-details{
+        margin: 1.5rem 0;
+        width: 100%;
+        border-collapse: collapse;
+        
+        .field{
+            width: 100%;
+            border: 1px solid $border-light;
+
+            @media screen and (min-width: $m){
+                display: flex;
+
+                & *{
+                    border: 1px solid $border-light;
+                }
+                label, .label {
+                    width: 30%;
+                    font-weight: $font-semi-bold;
+                }
+                input, .input {
+                    width: 70%;
+                    div {
+                        display: flex;
+                    }
+                }
+            }
+        }
+        .label, .input {
+            width: 100%;
+            min-height: 1.5rem;
+        }
+        label, .label {
+            font-weight: $font-semi-bold;
+        }
+    }
+}
+/*===== FOOTER =====*/
+footer{
+    background-color: $light;
+    border-top: solid .1rem $primary;
+    padding-top: 1.2rem;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+

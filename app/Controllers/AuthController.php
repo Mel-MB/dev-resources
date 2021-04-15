@@ -26,17 +26,15 @@ class AuthController extends Controller{
             'user' => $user
         ];
 
-        return $this->render('front/userAccount',$data);
+        return self::render('front/userAccount',$data);
     }
     public function edit(Request $request){
         //Get user account infos
-        $user = new User;
-        $user = $user->show(Application::$app->session->get('id'));
+        $user = User::show(Application::$app->session->get('id'));
         
         $user->rules = [
             'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18]],
             'email' => [User::RULE_REQUIRED, User::RULE_EMAIL],
-            'promotion' => [User::RULE_REQUIRED, User::RULE_YEAR],
         ];
         
         if($request->isPost()){
@@ -52,12 +50,12 @@ class AuthController extends Controller{
         }
         // Page data
         $data = [
-            'title' => 'Mon compte utilisateur',
+            'title' => 'Modifier mon compte',
             'description' => "Espace personnel permet de visualiser les informations de votre compte sur le site de partage Kercode",
             'user' => $user
         ];
 
-        return $this->render('front/userEditAccount',$data);
+        return self::render('front/userEditAccount',$data);
     }
     public function delete(){
         $user = new User;

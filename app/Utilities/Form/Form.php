@@ -10,21 +10,19 @@ class Form{
     private function __construct($id){
         $this->id = $id;
     }
-
+    // Form container
     public static function begin(string $method, string $id, string $action = ''): object{
         echo sprintf('<form action="%s" id="%s" method="%s">', $action, $id, $method);
         return new Form($id);
     }
-    public static function end(): string{
+    public function end(): string{
         return '</form>';
     }
-    public static function input(Entity $entity, string $attribute, string $input_type){
-        return new Input($entity, $attribute,$input_type);
+    // Add input
+    public static function input(Entity $entity, string $attribute,string $input_type = null, string $placeholder = '&nbsp;'){
+        return new Input($entity, $attribute,$input_type,$placeholder);
     }
     public static function textarea(Entity $entity, string $attribute){
         return new Textarea($entity, $attribute);
-    }
-    public static function tagInput(Entity $entity){
-        return new TagInput($entity);
     }
 }

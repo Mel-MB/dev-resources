@@ -9,7 +9,7 @@ class Router {
     private array $controllers;
     public Request $request;
     public Response $response;
-    protected array $routes = [];
+    private array $routes = [];
 
     public function __construct(array $url_accessible_controllers){
         $this->request = new Request();
@@ -17,12 +17,15 @@ class Router {
         $this->controllers = $url_accessible_controllers;
     }
 
-    public function get($path, $callback){
+    // Set routes
+    public function get(string $path, $callback): void{
         $this->routes['get'][$path] = $callback;
     }
-    public function post($path, $callback){
+    public function post(string $path, $callback): void{
         $this->routes['post'][$path] = $callback;
     }
+
+    // Routing from url
     public function resolve(){
         $controller = Application::$app->controller;
         $path = $this->request::getUrl();
@@ -46,14 +49,13 @@ class Router {
                     $callbackArray[1] = $callback->action;
                     $param = $callback->param;  
                 }
-
-
+                
                 $callback = $callbackArray;
             }
         }
         if (is_array($callback)){
             //create a callable Controller instance from the called class and register it as current cotroller for the app;
-            $controller = new $callback[0]();
+            $controller = new $callback[0];
             $controller->action = $callback[1];
             $callback[0] = $controller;
             // check if authorized
@@ -66,6 +68,7 @@ class Router {
     }
     private function callbackForPath(string $method, string $path){
         if(!isset($this->routes[$method][$path])){
+            
             // Check if the given path fits dynamic path
             if(preg_match('/\/(\d+)/',$path,$numParam)){
                 $path = str_replace('/','\/',$path);
@@ -84,8 +87,10 @@ class Router {
         }
         // Given path is static
         return $this->routes[$method][$path];
-
+        
     }
-    
+    public function redirectBack(){ 
+        $prevPage = str_replace('http://localhost:8080','',filter_var($_SERVER['HTTP_REFERER'], FILTER_SANITIZE_URL));  
+        return $this->callbackForPath('get',$prevPage) ? header("Location: $prevPage") : header("Location: /");
+    }
 }
-

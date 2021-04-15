@@ -9,7 +9,7 @@ class M001_initial{
                 `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `username` CHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
                 `email` CHAR(255) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
-                `promotion` YEAR NULL DEFAULT NULL,
+                `tags` VARCHAR(250) NULL DEFAULT NULL,
                 `password` VARCHAR(500) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
                 `job` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
                 `own_website` VARCHAR(150) NULL DEFAULT NULL COLLATE 'utf8_general_ci',

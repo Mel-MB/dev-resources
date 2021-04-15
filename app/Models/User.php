@@ -12,9 +12,9 @@ class User extends Model{
         return ['username', 'email'];
     }
     public static function requiredAttributes(): array {
-        return ['username', 'email', 'promotion', 'password'];
+        return ['username', 'email', 'password'];
     }
     public static function editableAttributes(): array {
-        return ['username', 'email', 'promotion','job', 'own_website','github','linkedin','discord','codepen'];
+        return ['username', 'email', 'tags','job', 'own_website','github','linkedin','discord','codepen'];
     }
 }

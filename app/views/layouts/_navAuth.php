@@ -1,27 +1,27 @@
 <?php
-
 use Project\Core\Application;
+use Project\Utilities\Form\Form;
 ?>
 
-<li class="nav-item mx-2">
-    <a href="/post/publier" class="nav-link">
+<li>
+    <a href="/post/publier">
         <i class="fas fa-plus"></i>
     </a>
 </li>
 
-<li class="nav-item mx-2">
-    <a href="/mes-posts" class="nav-link">
+<li>
+    <a href="/mes-posts">
         <i class="fas fa-newspaper"></i>
     </a>
 </li>
-<li class="nav-item mx-2">
-    <?php $form = Project\Utilities\Form\Form::begin('POST','signout','/se-deconnecter')?>
+<li>
+    <?php $form = Form::begin('POST','signout','/se-deconnecter')?>
         <button type="submit" id="<?=$form->id?>" class="outline-none">
             <i class="fas fa-power-off" aria-label="se déconnecter"></i>
         </button>    
-    <?= $form::end()?>
+    <?= $form->end()?>
 </li>
-<li class="nav-item mx-2">
-    <a href="/mon-compte" class="nav-link btn btn-primary"><?= Application::$app->session->get('username')?></a>
+<li>
+    <a href="/mon-compte" class="outline-secondary"><?= Application::$app->session->get('username')?></a>
 </li>
                   

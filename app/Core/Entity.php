@@ -37,11 +37,11 @@ abstract class Entity{
         return $newInstance;
     }
     
-    //Object basic behaviours
+    // Object basic behaviours
     public function create(){
         return self::$model::insert($this->entityToArray(self::$model::requiredAttributes()));
     }
-    public static function show(string $value, $attribute = null): object{
+    public static function show(string $value, $attribute = null){
         $class = get_called_class();
         $model = $class::$model;
         if(!$attribute){
@@ -50,11 +50,8 @@ abstract class Entity{
         $record = $model::selectOne([$attribute => $value]);
         return $class::newInstanceFromObject($record);
     }
-    public function delete(): bool{
-        $attribute = self::$model::$primary_key;
-        $value = $this->{$attribute};
-
-        return self::$model::deleteOn([$attribute => $value]);
+    public function delete($where = null): bool{
+        return self::$model::deleteOn($where);
     }
     // Model interaction
     protected function entityToArray(array $attributes = null): array{
@@ -88,7 +85,7 @@ abstract class Entity{
                 if($ruleName === self::RULE_REQUIRED && !$value){
                     $this->addError($attribute, self::RULE_REQUIRED);
                 }
-                if($ruleName === self::RULE_ALPHANUM && !preg_match('/^[a-zA-Z0-9_]+$/',$value)){
+                if($ruleName === self::RULE_ALPHANUM && !preg_match('/^[a-zA-Z0-9_-]+$/',$value)){
                     $this->addError($attribute, self::RULE_ALPHANUM);
                 }
                 if($ruleName === self::RULE_EMAIL && !filter_var($value, FILTER_VALIDATE_EMAIL)){
@@ -129,15 +126,15 @@ abstract class Entity{
             self::RULE_YEAR => "Merci de spécifier une année au format YYYY",
             self::RULE_MIN => "Taille minimale requise: :min caractères",
             self::RULE_MAX => "Taille maximale acceptée: :max caractères",
-            self::RULE_MATCH => "Ce champs doit être identique à votre saisie pour :match",
-            self::RULE_UNIQUE => "Un compte exite déjà avec votre :field",
+            self::RULE_MATCH => "La valeur ne correspond pas à votre saisie pour :match",
+            self::RULE_UNIQUE => "Un compte exite déjà avec votre :field choisi",
         ];
     }
     private function addError(string $attribute, string $ruleName,array $params=[]){
         $message = $this->errorMessages()[$ruleName] ?? '';
 
         foreach($params as $key => $value){
-            $message = str_replace(":{$key}", $value, $message);
+            $message = str_replace(":$key", $value, $message);
         }
         
         $this->errors[$attribute][] = $message;
