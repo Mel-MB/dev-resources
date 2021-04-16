@@ -90,8 +90,5 @@ class PostsController extends Controller{
         if(!$post->delete($id)){
             Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard.");
         }
-        // Refresh current page
-        Application::$app->router->redirectBack();
-        exit;
     }
 }

@@ -51,7 +51,7 @@ abstract class Entity{
         return $class::newInstanceFromObject($record);
     }
     public function delete($where = null): bool{
-        return self::$model::deleteOn($where);
+        return get_class($this)::$model::deleteOn($where);
     }
     // Model interaction
     protected function entityToArray(array $attributes = null): array{

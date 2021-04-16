@@ -40,6 +40,6 @@
                 </div>
             </div>
         </div>
-        <a href="/modifier-mon-compte" class="outline-secondary">Modifier mes infos</a>
+        <a href="/modifier-mon-compte" class="btn bg-secondary">Modifier mes infos</a>
     </div>
 </div>

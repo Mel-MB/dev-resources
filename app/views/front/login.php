@@ -6,7 +6,7 @@
         <?php $form = Project\Utilities\Form\Form::begin('POST','login')?>
             <?= $form->input($user,'username',)?>
             <?= $form->input($user,'password',Input::TYPE_PASSWORD)?>
-            <button type="submit" form="<?=$form->id?>" class="btn-secondary">Se connecter</button>    
+            <button type="submit" form="<?=$form->id?>" class="btn bg-secondary">Se connecter</button>    
         <?= $form->end()?>
     </div>
 </div>

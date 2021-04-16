@@ -9,7 +9,6 @@ use Project\Models\Tag;
 class PagesController extends Controller{
     public function home(){
         // Research bar
-
         $mostUsedTags = Tag::selectTop5();
         //Retrieve all posts
         $posts= Post::all();

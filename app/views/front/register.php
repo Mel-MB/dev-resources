@@ -11,6 +11,6 @@
                 <?= $form->input($user,'password_confirm',Input::TYPE_PASSWORD)?>
             </div>
         <?= $form->end()?>
-        <button type="submit" form="<?=$form->id?>" class="btn-secondary"><?= $title ?></button>    
+        <button type="submit" form="<?=$form->id?>" class="btn bg-secondary"><?= $title ?></button>    
     </div>
 </div>

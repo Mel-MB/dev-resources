@@ -12,15 +12,19 @@ html, body{
 body{
     margin: $header-height+2rem 0;
     font-family: $main-font;
-    font-size: $regular-font-size;
+    font-weight: $font-regular;
     background-color: $background;
-    color: $text-primary;
+    color: $dark;
     text-align: center;
+}
+h1 {
+    font-family: $important-font;
+    font-weight: $font-semi-bold;
+    font-size: $h1;
 }
 a {
     text-decoration: none;
-    color: $dark;
-    font-weight: $font-semi-bold;
+    color: $accent;
     border-radius: .6rem;
     -webkit-border-radius: .6rem;
     -moz-border-radius: .6rem;
@@ -28,12 +32,23 @@ a {
     -o-border-radius: .6rem;
     padding: .3rem .5rem;
 }
-input, textarea {
-    border: 1px solid $border-light;
-    background-color: inherit;
+input, textarea, tags {
+    background-color: $background;
+    border: none;
     outline: none;
+    border-radius: .5rem;
+    padding: .8rem;
     display: block;
     width: 100%;
+    font-family: inherit;
+    -webkit-border-radius: .5rem;
+    -moz-border-radius: .5rem;
+    -ms-border-radius: .5rem;
+    -o-border-radius: .5rem;
+
+    &:hover, &:focus{
+        border: solid 1px $medium;
+    }
 }
 textarea {
     min-height: 10rem;
@@ -44,7 +59,7 @@ li {
 button {
     border: none;
     color: $dark;
-    background-color: transparent;
+    background-color: inherit;
     border-radius: .6rem;
     -webkit-border-radius: .6rem;
     -moz-border-radius: .6rem;
@@ -57,9 +72,7 @@ i{
     &::before{
         padding: auto;
     }
-}
-
-/*========== GENERAL CLASSES ==========*/
+}/*========== GENERAL CLASSES ==========*/
 .container{
     width: 90%;
     margin: 0 auto;
@@ -74,21 +87,46 @@ i{
 .primary{
     color: $primary;
 }
-.btn-primary{
-    background-color: $primary;
-    color: #fff;
+.btn{
+    padding: 1rem;
+    min-width: 200px;
+    font-size: $medium-font-size;
+    border-radius: 10rem;
+    -webkit-border-radius: 10rem;
+    -moz-border-radius: 10rem;
+    -ms-border-radius: 10rem;
+    -o-border-radius: 10rem;
+    box-shadow: 0px 3px 7px 0px rgb(0 0 0 / 35%);
+    &:hover{
+        background-color: $accent;
+    }
+}
+.btn, .accent {
+    font-family: $important-font;
+    font-weight: $font-light;
+    font-style: italic;
+}
+.primary{
+    color: $primary;
 }
 .secondary{
     color: $secondary;
 }
-.btn-secondary{
-    background-color: $secondary;
-    color: #fff;
+.accent{
+    color: $accent;
 }
-.outline-secondary{
-    border:solid 2px $secondary;
-    color: $secondary;
-    font-weight: $font-semi-bold;
+.bg-{
+    &primary{
+        background-color: $primary;
+        color: $light;
+    }
+    &secondary{
+        background-color: $secondary;
+        color: $light;
+    }
+    &accent{
+        background-color: $accent;
+    }
 }
 .alert{
     width: 100%;
@@ -109,11 +147,100 @@ i{
         color: $warning;
     }
 }
+/*========== PAGE CONTENT ==========*/
+/*===== NAVBAR =====*/
+header.sticky-top{
+    background-color: $background;
+    box-shadow: 0px 3px 7px 0px rgb(66 94 94 / 35%);
+    min-height: $header-height;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+
+    nav{
+        text-align: center;
+        margin: .5rem 0 $gap;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .navbar{
+            min-width: 80%;
+            display: flex;
+            justify-content: flex-end;
+
+            @media screen and (min-width: $m){
+                justify-content: space-around;
+            }
+
+            >*{
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+            div{
+                flex:2;
+                i{
+                    color: $secondary;
+                }
+                &:hover{
+                    background-color: $background;
+                }
+                #search{
+                    display: none;
+                    width: 80%;
+                    padding: .2rem .5rem;
+                    border-radius: .3rem;
+                    -webkit-border-radius: .3rem;
+                    -moz-border-radius: .3rem;
+                    -ms-border-radius: .3rem;
+                    -o-border-radius: .3rem;
+                    background-color: $light;
+                    input{
+                        width: 90%;
+                        outline: none;
+                        text-overflow: ellipsis;
+                        padding-left: $gap;
+                        border: none;
+                        background-color: transparent;
+                    }
+                    i{
+                        color: $secondary;
+                    }
+                    
+                }
+                @media screen and (min-width: $m){
+                    padding-left: $gap;
+                    a[title="rechercher"]{
+                        display: none;
+                    }
+                    #search{
+                        display: flex;
+                    }
+                }
+            }
+            ul{
+     
+                li{
+                    padding: auto;
+                    a, button{
+                        display: block;
+                        &.outline-secondary{
+                            color: $secondary;
+                        }   
+                    }
+                }
+            }
+        } 
+    }
+}
+
 .delete{
     color: $warning;
 }
 .card{
-    background-color: #fff;
+    background-color: $light;
     position: relative;
     overflow: hidden;
     border-radius: .4rem;
@@ -121,34 +248,35 @@ i{
     -moz-border-radius: .4rem;
     -ms-border-radius: .4rem;
     -o-border-radius: .4rem;
-    border:solid 1px $border-light;position: relative;
+    ;position: relative;
 
     h1{
         width: 100%;
-        border-bottom:solid 1px $border-light;
         padding: .5rem;
-        background-color: $secondary;
-        color: $light;
+        background-color: $primary;
+        color: $accent;
     }
 }
 /*===== MASONRY LAYOUT =====*/
 .grid { 
+    &> *{
+        margin-bottom: $gap;
+    }
     @media screen and (min-width: $m){
         --columns: 2;
         display: column;
         columns: var(--columns);
         gap: $gap;   
-        .flow {
+        &> *{
             break-inside: avoid;
-            margin-bottom: $gap;
         }
     }
     @media screen and (min-width: $l){
         --columns: 3;
-
     }
     @media screen and (min-width: $xl){
-        --columns: 4;    }
+        --columns: 4;
+    }
 }
 @supports (grid-template-rows: masonry){
     .grid{
@@ -226,20 +354,12 @@ i{
             
         }
     }
-    input[type="submit"], button[type="submit"]{
-        margin : 1rem;
-        min-width: 20%;
-        padding: .5rem 1.5rem;
-        font-size: $regular-font-size;
-    };
 
 }
 /*===== POSTS =====*/
 section#articles{
     margin: 2rem 0;
-    overflow: hidden;
 
-    // post card 
     article{
         &>*{
             padding: .8rem;
@@ -258,8 +378,7 @@ section#articles{
             }
         }
         .card-footer{
-            border-top:solid 1px $border-light;
-            background-color: $light;
+            background-color: $medium;
         }                  
     }
 }
@@ -272,141 +391,62 @@ section#articles{
         font-size: $small-font-size;
         padding: .1rem .6rem;
         margin: .3rem .5rem;
-        border:solid 1px $dark;
-        color: $dark; 
+        background-color: $secondary;
+        color: $light;
+
+        :hover {
+            background-color: $accent;
+        }
     }
 }
-/*========== PAGE CONTENT ==========*/
-/*===== NAVBAR =====*/
-header.sticky-top{
-    background-color: $light;
-    min-height: $header-height;
-    border-bottom: solid .5px $primary;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 100;
 
-    nav{
-        text-align: center;
-        margin: .5rem 0 $gap;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        
-        .navbar{
-            min-width: 80%;
-            display: flex;
-            justify-content: flex-end;
-
-            @media screen and (min-width: $m){
-                justify-content: space-around;
-            }
-
-            >*{
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
-            }
-            div{
-                flex:2;
-                i{
-                    color: $secondary;
-                }
-                &:hover{
-                    background-color: $background;
-                }
-                #search{
-                    display: none;
-                    width: 80%;
-                    padding: .2rem .5rem;
-                    border: solid 1px $secondary;
-                    border-radius: .3rem;
-                    -webkit-border-radius: .3rem;
-                    -moz-border-radius: .3rem;
-                    -ms-border-radius: .3rem;
-                    -o-border-radius: .3rem;
-                    background-color: $light;
-                    input{
-                        width: 90%;
-                        outline: none;
-                        text-overflow: ellipsis;
-                        padding-left: $gap;
-                        border: none;
-                        background-color: transparent;
-                    }
-                    i{
-                        color: $secondary;
-                    }
-                    
-                }
-                @media screen and (min-width: $m){
-                    padding-left: $gap;
-                    a[title="rechercher"]{
-                        display: none;
-                    }
-                    #search{
-                        display: flex;
-                    }
-                }
-            }
-            ul{
-     
-                li{
-                    padding: auto;
-                    a, button{
-                        display: block;
-                        &.outline-secondary{
-                            color: $secondary;
-                        }   
-                    }
-                }
-            }
-        } 
-    }
-}
 /*===== CONTENT =====*/
 main{
     #account-details{
         margin: 1.5rem 0;
-        width: 100%;
-        border-collapse: collapse;
+        width: 80%;
+        margin: 2rem auto;
+
         
         .field{
             width: 100%;
-            border: 1px solid $border-light;
-
+            padding: .5rem;
             @media screen and (min-width: $m){
                 display: flex;
-
-                & *{
-                    border: 1px solid $border-light;
-                }
-                label, .label {
-                    width: 30%;
+            }
+            .label, .input {
+                min-height: 1.5rem;
+            }
+            label, input{
+                width: 100%;
+            }
+            label, .label {
+                font-weight: $font-semi-bold;
+                @media screen and (min-width: $m){
+                    width: 35%;
                     font-weight: $font-semi-bold;
                 }
-                input, .input {
-                    width: 70%;
-                    div {
+            }
+            .input {
+                width: 70%;
+                div {
+                    @media screen and (min-width: $m){
                         display: flex;
                     }
                 }
+                @media screen and (min-width: $m){
+                    width: 65%;
+                }
             }
         }
-        .label, .input {
-            width: 100%;
-            min-height: 1.5rem;
-        }
-        label, .label {
-            font-weight: $font-semi-bold;
+        :last-child{
+            border-bottom: none;
         }
     }
 }
 /*===== FOOTER =====*/
 footer{
-    background-color: $light;
-    border-top: solid .1rem $primary;
+    background-color: $primary;
     padding-top: 1.2rem;
     text-align: center;
     position: fixed;
@@ -414,5 +454,3 @@ footer{
     width: 100%;
     z-index: 100;
 }
-
-

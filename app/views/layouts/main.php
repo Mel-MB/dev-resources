@@ -16,8 +16,7 @@ $router = Application::$app->router;
     <script src="https://kit.fontawesome.com/b6cd7159ce.js" crossorigin="anonymous"></script>
     <!--Fonts-->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!--Styles-->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500&family=Petrona:ital,wght@0,700;1,300&display=swap" rel="stylesheet">
     <?php if($tagifyNeeded) echo '<link rel="stylesheet" href="/css/tagify.css"  type="text/css">'?>
     <link rel="stylesheet" href="/css/style.css" type="text/css">
 

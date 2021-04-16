@@ -6,7 +6,7 @@
              <?= $form->textarea($post,'content')?>
              <?= $form->input($post,'tags')?>
     
-            <button type="submit" form="<?=$form->id?>" class="outline-secondary"> <?= $submitMessage ?></button>    
+            <button type="submit" form="<?=$form->id?>" class="btn bg-secondary"> <?= $submitMessage ?></button>    
         <?= $form->end()?>
     </div>
 </div>

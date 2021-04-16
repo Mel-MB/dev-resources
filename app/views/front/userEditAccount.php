@@ -23,12 +23,12 @@
                 </div>
             <?= $editform->end()?>
             <div class="buttons">
-                <button type="submit" form="<?=$editform->id?>" class="outline-secondary">
+                <button type="submit" form="<?=$editform->id?>" class="btn bg-secondary">
                     Enregistrer les modifications
                 </button>
     
                 <?php $supprform = Form::begin('POST','delete','/supprimer-mon-compte')?>
-                <button type="submit" form="<?=$supprform->id?>" class="text-muted" 
+                <button type="submit" form="<?=$supprform->id?>" class="btn bg-medium" 
                     onclick="confirm('Êtes-vous sûr(e)? La suppression de votre compte est irréversible.')">
                     Supprimer mon compte
                 </button>

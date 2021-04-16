@@ -61,11 +61,12 @@ abstract class Model{
         $class = get_called_class();
         $table = $class::$table_name;
 
+        if(is_string($where) || is_int($where)){
+            $primaryKey = $class::$primary_key;
+            $where = [$primaryKey => $where];
+        }
         if(is_array($where)){
             $sql_condition = implode(" AND ", self::arrayToSqlAssoc($where));
-        }elseif(is_string($where) || is_int($where)){
-            $primaryKey = $class::$primary_key;
-            $sql_condition = "$primaryKey = :$where";
         }else{
             return false;
         }

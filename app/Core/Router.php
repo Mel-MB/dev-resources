@@ -89,8 +89,5 @@ class Router {
         return $this->routes[$method][$path];
         
     }
-    public function redirectBack(){ 
-        $prevPage = str_replace('http://localhost:8080','',filter_var($_SERVER['HTTP_REFERER'], FILTER_SANITIZE_URL));  
-        return $this->callbackForPath('get',$prevPage) ? header("Location: $prevPage") : header("Location: /");
-    }
+
 }
