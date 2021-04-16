@@ -2,6 +2,7 @@
 
 namespace Project\Models;
 
+use Project\Core\Application;
 use Project\Core\Database\Model;
 
 class Tag extends Model{
@@ -18,8 +19,10 @@ class Tag extends Model{
             ORDER BY COUNT(pt.post_id) DESC LIMIT 5;
         ");
         $request->execute();
+
         $result = $request->fetchAll();
-        
+
+
         return $result ?? [];
     } 
     public static function requiredAttributes(): array {

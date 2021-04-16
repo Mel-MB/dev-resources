@@ -37,7 +37,7 @@ class Application{
                 exit;
             }
             Application::$app->session->setFlash('error',$e->getMessage());
-            header("Location: /");
+            //header("Location: /");
             exit;
         }
     }

@@ -13,8 +13,9 @@ class Database{
             self::$pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
             // configure pdo to display throw errors
             self::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
         }catch(\PDOException $e){
-            die('Erreur: '.$e->getMessage());
+            die('Erreur de connexion: '.$e->getMessage());
         }
     }
 
