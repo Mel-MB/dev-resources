@@ -4,7 +4,6 @@ namespace Project\Controllers;
 
 use Project\Core\{Application, Controller, Request};
 use Project\Entities\{Post, User};
-use Project\Middlewares\AuthMiddleware;
 use Project\Models\Tag;
 
 class PagesController extends Controller{
