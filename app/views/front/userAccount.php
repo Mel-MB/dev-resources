@@ -10,12 +10,6 @@
                 <p class="label">Email</p>
                 <p class="input"><?= $user->email ?></p>
             </div>
-            <!--
-                user groups to be implemented later
-            <div class="field">
-                <p class="label">Vous organisations</p>
-                <p class="input"><?= $user->tags ?></p>
-            </div> -->
             <div class="field">
                 <p class="label">Poste actuel</p>
                 <p class="input"><?php if(isset($user->job)) echo $user->job?></p>

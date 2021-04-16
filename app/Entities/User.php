@@ -10,7 +10,6 @@ class User extends Entity{
     public int $id                      = 0;
     public string $username             = '';
     public string $email                = '';
-    public $tags                        = '';
     public string $job                  = '';
     public string $own_website          = '';
     public string $github               = '';
@@ -70,7 +69,6 @@ class User extends Entity{
         return [
             'username' => 'Pseudo',
             'email' => 'Email',
-            'tags' => 'Vos organisations',
             'password' => 'Mot de passe',
             'password_confirm' => 'Confirmation du mot de passe',
             'job' => 'Poste actuel',
