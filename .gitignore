@@ -1,5 +1,5 @@
+.vscode
 vendor
 node_modules
-.vscode
 .env
 specs
