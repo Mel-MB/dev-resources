@@ -26,9 +26,9 @@ class AuthController extends Controller{
             'user' => $user
         ];
 
-        return self::render('front/userAccount',$data);
+        return self::render('back/userAccount',$data);
     }
-    public function edit(Request $request){
+    public function edit(){
         //Get user account infos
         $user = User::show(Application::$app->session->get('id'));
         
@@ -37,8 +37,8 @@ class AuthController extends Controller{
             'email' => [User::RULE_REQUIRED, User::RULE_EMAIL],
         ];
         
-        if($request->isPost()){
-            $user->populate($request->getData());
+        if(Request::isPost()){
+            $user->populate(Request::getData());
 
             if ($user->validate()){
                 if($user->update()){
@@ -55,7 +55,7 @@ class AuthController extends Controller{
             'user' => $user
         ];
 
-        return self::render('front/userEditAccount',$data);
+        return self::render('back/userEditAccount',$data);
     }
     public function delete(){
         $user = new User;
@@ -71,7 +71,4 @@ class AuthController extends Controller{
         Application::$app->session->setFlash('success', 'Vous êtes déconnecté');
         header('Location: /');
     }
-
-
-
 }

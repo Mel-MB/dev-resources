@@ -39,7 +39,7 @@
                     </div>
                 </div>
             </div>
+            <a href="/modifier-mon-compte" class="btn">Modifier mes infos</a>
         </div>
-        <a href="/modifier-mon-compte" class="btn bg-secondary">Modifier mes infos</a>
     </div>
 </div>

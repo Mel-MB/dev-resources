@@ -19,17 +19,26 @@ class PagesController extends Controller{
          ];
          return self::render('front/home',$data);
     }
-
-
-    public function login(Request $request){
+    public function category(string $tag_name){
+        $posts= Post::fromCategory($tag_name);;
+        $nbPosts = sizeof($posts) ?? 'Aucun';
+        $units = ($nbPosts === 1)?'resource partagée':'resources partagées';
+        // Page data
+        $data = [
+            'title' => "$nbPosts $units sur $tag_name.",
+            'posts' => $posts
+        ];
+        return self::render('front/searchResult',$data);
+    }
+    public function login(){
         $user = new User;
         $user->rules = [
             'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18]],
             'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]]
         ];
 
-        if ($request->isPost()){
-            $user->populate($request->getData());
+        if (Request::isPost()){
+            $user->populate(Request::getData());
  
             if($user->validate()){
                 if($user->connect()){
@@ -50,18 +59,17 @@ class PagesController extends Controller{
         
         return self::render('front/login',$data);
     }
-    public function register(Request $request){
+    public function register(){
         $user = new User;
         $user->rules = [
             'username' => [User::RULE_REQUIRED, User::RULE_ALPHANUM, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18], User::RULE_UNIQUE],
             'email' => [User::RULE_REQUIRED, User::RULE_EMAIL, User::RULE_UNIQUE],
-            '' => [User::RULE_REQUIRED, User::RULE_YEAR],
             'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]],
             'password_confirm' => [User::RULE_REQUIRED, [User::RULE_MATCH, 'match'=> 'password']]
         ];
         
-        if($request->isPost()){
-            $user->populate($request->getData());
+        if(Request::isPost()){
+            $user->populate(Request::getData());
 
             if ($user->validate()){
                 if($user->create()){

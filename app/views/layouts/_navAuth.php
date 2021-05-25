@@ -22,6 +22,6 @@ use Project\Utilities\Form\Form;
     <?= $form->end()?>
 </li>
 <li>
-    <a href="/mon-compte" class="accent"><?= Application::$app->session->get('username')?></a>
+    <a href="/mon-compte" class="btn accent"><?= Application::$app->session->get('username')?></a>
 </li>
                   

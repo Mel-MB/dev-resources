@@ -23,6 +23,7 @@ $app = new Application(dirname(__DIR__),$config);
 $app->router->get('/',[PagesController::class, 'home']);
 $app->router->get('/se-connecter', [PagesController::class, 'login']);
 $app->router->get('/s-inscrire', [PagesController::class, 'register']);
+$app->router->get('/posts/{string $tag_name}', [PagesController::class, 'category']);
 
 // Authentified user restricted access pages
 $app->router->get('/mon-compte', [AuthController::class, 'profile']);
@@ -35,6 +36,7 @@ $app->router->get('/post/modifier/{int $id}', 'update');
 // Actions
 $app->router->post('/se-connecter', [PagesController::class, 'login']);
 $app->router->post('/s-inscrire', [PagesController::class, 'register']);
+$app->router->post('/rechercher', [PostsController::class, 'search']);
 
 //  Authentified user restricted actions
 $app->router->post('/modifier-mon-compte', [AuthController::class, 'edit']);

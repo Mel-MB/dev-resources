@@ -76,7 +76,7 @@ class User extends Entity{
             'github' => 'Profil github',
             'linkedin' => 'Profil linkedin',
             'discord' => 'Compte discord',
-            'codepen' => 'Profil codepen',
+            'codepen' => 'Profil codepen'
         ];
     }
 }

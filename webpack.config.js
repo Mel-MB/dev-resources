@@ -14,7 +14,7 @@ module.exports = {
   module: {
     rules: [
         { 
-          test: /\.s[ac]ss$/i,
+          test: /\.scss$/,
           use: [
             {
               loader: "file-loader",
@@ -27,6 +27,7 @@ module.exports = {
               loader: 'css-loader',
               options: {
                 sourceMap: true,
+                url: false
               }
             },
             {

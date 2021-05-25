@@ -12,7 +12,7 @@ class Form{
     }
     // Form container
     public static function begin(string $method, string $id, string $action = ''): object{
-        echo sprintf('<form action="%s" id="%s" method="%s">', $action, $id, $method);
+        echo "<form action=\"$action\" id=\"$id\" method=\"$method\">";
         return new Form($id);
     }
     public function end(): string{

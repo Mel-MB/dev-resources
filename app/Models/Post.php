@@ -2,6 +2,7 @@
 
 namespace Project\Models;
 
+use Exception;
 use Project\Core\Application;
 use Project\Core\Database\Model;
 
@@ -57,6 +58,20 @@ class Post extends Model {
         
         return $result ? self::visualise($result) : [];
     }
+    public static function getPostIdByTag(string $name){
+        $request = self::prepare('
+        SELECT post_id 
+        FROM posts_tags 
+        WHERE tag_id = (
+            SELECT id 
+            FROM tags 
+            WHERE name = ?
+        )');
+        $request->execute([$name]);
+        $result = $request->fetchAll();
+        
+        return $result ?? [];
+    }
     // Insert
     public static function insert(array $entity){
         try {
@@ -93,6 +108,9 @@ class Post extends Model {
     // Update
     public static function updateWhere(array $entity,array $where){
         $sql_condition = implode(" AND ", self::arrayToSqlAssoc($where));
+        $entity_tags = $entity['tags'];
+        unset($entity['tags']);
+        $data = implode(", ", self::arrayToSqlAssoc($entity));
 
         try {
             //Start SQL transaction
@@ -103,10 +121,10 @@ class Post extends Model {
             Application::$app->db::$pdo->query('SET @update_id := 0;');
             $request = self::prepare("
                 UPDATE `posts` 
-                SET content = :content, id = (SELECT @update_id := id) 
+                SET $data, id = (SELECT @update_id := id) 
                 WHERE $sql_condition LIMIT 1;"
             );
-            $request->execute($where + ['content' => $entity['content']]);
+            $request->execute($where + $entity);
 
             // retrieve post id
             $updated = Application::$app->db::$pdo->query('SELECT @update_id;');
@@ -116,11 +134,11 @@ class Post extends Model {
             $tags = array_map(fn($x) => Tag::selectOne(["id" => $x->tag_id]),$tagsRecord);
             foreach($tags as $tag){
                 // Checked for removed tag
-                if (!in_array($tag->name, $entity['tags'])){
+                if (!in_array($tag->name, $entity_tags)){
                     self::$relationnal_table::deleteOn(["tag_id" => $tag->id]);
                 }
             }
-            foreach($entity['tags'] as $post_tag){
+            foreach($entity_tags as $post_tag){
                 //Check for added tag
                 if(!in_array($post_tag, array_map(fn($tag) => $tag->name, $tags))){
                     //Check for existing tag
@@ -135,17 +153,29 @@ class Post extends Model {
                 }
             }
             
-            $result = Application::$app->db::$pdo->commit();
+            return Application::$app->db::$pdo->commit();
             
         } catch (\Exception $e) {
             Application::$app->db::$pdo->rollBack();
-            $result = "Erreur: " . $e->getMessage();
+            throw new \Exception("Erreur: " . $e->getMessage()) ;
         }
-        return $result;
         
     }
-    
-
+    // Search
+    public static function find($value){
+        $request = self::prepare('
+            SELECT p.*, u.username, t.name AS tags 
+            FROM `posts` p 
+            INNER JOIN `users` u ON u.id = p.user_id
+            INNER JOIN posts_tags pt ON p.id = pt.post_id
+            JOIN tags t ON pt.tag_id = t.id
+            WHERE p.content LIKE :query OR t.name LIKE :query
+            ORDER BY p.id DESC'
+        );
+        $request->execute(['query' => "%$value%"]);
+        $result = $request->fetchAll(\PDO::FETCH_GROUP);
+        return $result ? self::visualise($result) : [];
+    }
     // Database visualisation
     private static function visualise(array $postsRecords){
         $posts = [];
@@ -165,9 +195,12 @@ class Post extends Model {
     
     // Entity Interaction methods
     public static function requiredAttributes(): array {
-        return ['content', 'tags', 'user_id'];
+        return ['title','content', 'tags', 'user_id'];
+    }
+    public static function linkAttributes(): array {
+        return ['link', 'linkTitle','linkDomain','linkIcon'];
     }
     public static function editableAttributes(): array {
-        return ['content', 'tags'];
+        return array_merge(self::requiredAttributes(), self::linkAttributes());
     }
 }

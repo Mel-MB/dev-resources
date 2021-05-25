@@ -1,22 +1,31 @@
 <?php 
 namespace Project\Core;
 
+use Project\Middlewares\AuthMiddleware;
+
 class Controller{
     public string $action = '';
     protected array $middlewares = [];
-
-    public static string $title = 'Partage de ressources Kercode';
-    public static string $description = 'Le blog de partage et classification de ressources des étudiants de Kercode';
-
+    private static string $title = 'Partage de ressources';
+    private static string $description = 'Le blog de partage et classification de ressources des codeurs débutants';
 
     // View rendering methods
     public static function render($view, $data = []): string{
-        $layoutContent = self::renderLayout($data['title'] ?? $data['title'] = self::$title, $data['description'] ?? $data['description'] = self::$description);
+        $data['title'] ?? $data['title'] = self::$title;
+        $data['description'] ?? $data['description'] = self::$description;
+        
         $viewContent = self::renderContent($view,$data);
-
+        if(Request::isAjax()){
+            return json_encode([
+                'title' => $data['title'],
+                'sourceCode' => $viewContent
+            ]);
+        }
+        $layoutContent = self::renderLayout($data['title'],$data['description']);
         return str_replace('{{-content-}}',$viewContent,$layoutContent); 
-    }
-    public static function renderContent($view, array $data = []): string{
+        
+    }     
+    private static function renderContent($view, array $data = []): string{
         //Allow view to use the passed in data as varibles
         foreach ($data as $key => $value){
             //Create a variable named by its key variable and affect it to its value

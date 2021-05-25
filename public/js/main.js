@@ -127,43 +127,96 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _yaireo_tagify_src_tagify_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @yaireo/tagify/src/tagify.scss */ "./node_modules/@yaireo/tagify/src/tagify.scss");
 
 const Tagify = __webpack_require__(/*! @yaireo/tagify/dist/tagify.min.js */ "./node_modules/@yaireo/tagify/dist/tagify.min.js");
-// API GET request
-async function getPreview(url){
-    let token = '3564e019bb7d051784189285010d3a72';
 
-    const response = await fetch(`http://api.linkpreview.net/?key=${token}&q=${url}`);;
-    const data =  await response.json();
-
-    return data;
-}
 
 document.addEventListener('DOMContentLoaded', () => {
-    let input = document.querySelector('input[name="tags"]');
-    let posts = document.querySelectorAll('.post');
+    const searchBar = document.querySelector("form#search input");
+    const buttons = document.querySelectorAll(".fa-trash-alt");
+    const tagsInput = document.querySelector('input[name="tags"]');
+    const posts = document.querySelectorAll('.post');
 
-    if(posts.textContent !== ""){
-        const urlRegEx = /https?:\/\/([www\.]?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b)[-a-zA-Z0-9()@:%_\+.~#?&//=]*/
-
-        posts.forEach(function(post){
-            let url = post.innerText.match(urlRegEx);
-            if(url){
-                const preview = getPreview(url);
-                preview.then((preview) => console.log(preview));
-
-            };
-            
-        });
-              
-    };
-
-    if(input !== null){ 
-        new Tagify( input, {
+    if(searchBar) searchPosts(searchBar)
+    if(buttons) handleDelete(buttons)
+    if(tagsInput !== null){ 
+        new Tagify( tagsInput, {
             delimiters          : ",| ",
-        });      
-    };
+        })      
+    }
+    
 });
 
+// Search function fires of when user press "Enter" key
+const searchPosts = (input) =>{
 
+    input.addEventListener('keydown', async (e) => {
+        if(e.key === "Enter"){
+            e.preventDefault()
+            let value = e.target.value;
+            let container = document.getElementById('content')
+
+            if(value){
+                const posts = await postThenFetchJson(
+                    e.target.parentElement.action,{
+                    body: JSON.stringify({query: value})
+                })
+                container.classList.add('fadeOut')
+                await timeout(300)
+                container.innerHTML =''
+                await timeout(300)
+                container.innerHTML = posts.sourceCode
+                container.classList.remove('fadeOut')
+
+            }
+        }
+    })
+}
+
+// Handle delete buttons
+const handleDelete = (buttons) =>{
+
+    buttons.forEach(button => (button.closest("form[id^='delete']").addEventListener('submit', async (e) => {
+        e.preventDefault()
+        const conf = confirm("Êtes-vous sûr(e)? La suppression du post est irréversible.")
+
+        if(conf){
+            const success = await postThenFetchJson(e.target.action)
+            if(success !== true){
+                window.location.reload();
+            }
+            const element = button.closest('article, .comment')
+
+            element.classList.add('fadeOut')
+            await timeout(700)
+            element.remove()
+        }
+    
+    })))
+}
+
+/*========== General helpers ==========*/
+const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+/*===== Fetch helpers =====*/
+const fetchJson = async (url, options = {}) => {
+    const init = {
+        ...options,
+        headers: {...options.headers, 'X-Requested-With': 'XMLHttpRequest'}
+    }
+
+    const resp = await fetch(url,init)
+
+    return resp.json();
+}
+//Make an HTTP POST Request (also used for DELETE http purposes in order to remain accessible on disabled scripts)
+const postThenFetchJson = async (url, options = {}) => {
+    const init = {
+        ...options, 
+        method: 'POST',
+        headers: {...options.headers, 'Content-Type': 'application/json'}
+    }
+    console.log(init)
+    return fetchJson(url,init)
+}
 
 })();
 

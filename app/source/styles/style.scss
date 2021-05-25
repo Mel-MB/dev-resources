@@ -1,4 +1,4 @@
-/*========== RESET ==========*/
+/*=============== RESET ===============*/
 *,
 ::before,
 ::after {
@@ -6,23 +6,26 @@
     margin: 0;
     padding: 0;
 }
-html, body{
-    height: 100%;
+html{   
+    position: relative;
 }
 body{
-    margin: $header-height+2rem 0;
+    height: 100%;
+    background-color: $light;
     font-family: $main-font;
     font-weight: $font-regular;
-    background-color: $background;
+    font-size: $medium-font-size;
     color: $dark;
     text-align: center;
 }
 h1 {
-    font-family: $important-font;
-    font-weight: $font-semi-bold;
+    font-weight: $font-bold;
     font-size: $h1;
+    text-align: center;
+    margin-bottom: $gap;
+    color: $primary;
 }
-a {
+a{
     text-decoration: none;
     color: $accent;
     border-radius: .6rem;
@@ -30,24 +33,26 @@ a {
     -moz-border-radius: .6rem;
     -ms-border-radius: .6rem;
     -o-border-radius: .6rem;
-    padding: .3rem .5rem;
+}
+p{
+    margin-block: 0;
 }
 input, textarea, tags {
     background-color: $background;
-    border: none;
+    border: 1px solid $medium;
     outline: none;
-    border-radius: .5rem;
     padding: .8rem;
     display: block;
     width: 100%;
     font-family: inherit;
+    border-radius: .5rem;
     -webkit-border-radius: .5rem;
     -moz-border-radius: .5rem;
     -ms-border-radius: .5rem;
     -o-border-radius: .5rem;
 
     &:hover, &:focus{
-        border: solid 1px $medium;
+        border-color: $dark;
     }
 }
 textarea {
@@ -58,7 +63,7 @@ li {
 }
 button {
     border: none;
-    color: $dark;
+    color: $accent;
     background-color: inherit;
     border-radius: .6rem;
     -webkit-border-radius: .6rem;
@@ -72,12 +77,38 @@ i{
     &::before{
         padding: auto;
     }
-}/*========== GENERAL CLASSES ==========*/
+}
+/*=============== GENERAL CLASSES ===============*/
+.up3{
+    transform: skewY(3deg);
+    -webkit-transform: skewY(3deg);
+    -moz-transform: skewY(3deg);
+    -ms-transform: skewY(3deg);
+    -o-transform: skewY(3deg);
+}
+.desc3{
+    transform: skewY(-3deg);
+    -webkit-transform: skewY(-3deg);
+    -moz-transform: skewY(-3deg);
+    -ms-transform: skewY(-3deg);
+    -o-transform: skewY(-3deg);
+}
 .container{
     width: 90%;
     margin: 0 auto;
     @media screen and (min-width: $xl){
         width: 1200px;
+    }
+}
+.wrapper{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    >*{
+        max-width: 100% !important;
+        max-height: 100% !important;
     }
 }
 .text-muted{
@@ -88,9 +119,12 @@ i{
     color: $primary;
 }
 .btn{
-    padding: 1rem;
-    min-width: 200px;
+    padding: 1rem 2rem;
+    background-color: $secondary;
+    border: solid 1px $secondary;
+    color: $accent;
     font-size: $medium-font-size;
+    font-weight: $font-bold;
     border-radius: 10rem;
     -webkit-border-radius: 10rem;
     -moz-border-radius: 10rem;
@@ -98,13 +132,9 @@ i{
     -o-border-radius: 10rem;
     box-shadow: 0px 3px 7px 0px rgb(0 0 0 / 35%);
     &:hover{
-        background-color: $accent;
+        background-color: transparent;
+        color: $secondary;
     }
-}
-.btn, .accent {
-    font-family: $important-font;
-    font-weight: $font-light;
-    font-style: italic;
 }
 .primary{
     color: $primary;
@@ -115,42 +145,52 @@ i{
 .accent{
     color: $accent;
 }
-.bg-{
-    &primary{
-        background-color: $primary;
-        color: $light;
-    }
-    &secondary{
-        background-color: $secondary;
-        color: $light;
-    }
-    &accent{
-        background-color: $accent;
-    }
+.bg-primary{
+    background-color: $primary;
+    color: $background;
 }
-.alert{
+.bg-secondary{
+    background-color: $secondary;
+    color: $light;
+}
+.bg-accent{
+    background-color: $accent;
+}
+
+/*=============== ANIMATIONS ===============*/
+/* Fade out animation */
+.fadeOut {
+    /*@keyframes|duration|timing-function|direction|fill-mode*/
+    animation: fadeOut 0.7s linear both;
+    -webkit-animation: fadeOut 0.7s linear both;
+}
+  
+@keyframes fadeOut {
+0% { opacity: 1;}
+100% { opacity: 0;}
+}
+/*=============== PAGE CONTENT ===============*/
+.logo{
     width: 100%;
-    margin: .5rem;
-    padding: .8rem;
-    border-radius: .5rem;
-    -webkit-border-radius: .5rem;
-    -moz-border-radius: .5rem;
-    -ms-border-radius: .5rem;
-    -o-border-radius: .5rem;
-    font-weight: $font-semi-bold;
-        &-success{
-        border:solid .125rem $success;
-        color: $success;
+    position: relative;
+    display: block;
+    .center{
+        text-anchor: middle;
     }
-    &-error{
-        border:solid .125rem $warning;
-        color: $warning;
+    .dev{
+        font-family: $main-font;
+        fill: $dark;
+        font-size: 1.5rem;  
     }
+    .ressources{
+        font-family: $important-font;
+        font-size: 3rem;  
+    }
+    
 }
-/*========== PAGE CONTENT ==========*/
-/*===== NAVBAR =====*/
+/*========== HEADER ==========*/
 header.sticky-top{
-    background-color: $background;
+    background-color: $primary;
     box-shadow: 0px 3px 7px 0px rgb(66 94 94 / 35%);
     min-height: $header-height;
     position: fixed;
@@ -160,18 +200,30 @@ header.sticky-top{
 
     nav{
         text-align: center;
-        margin: .5rem 0 $gap;
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
-        
-        .navbar{
-            min-width: 80%;
-            display: flex;
-            justify-content: flex-end;
 
-            @media screen and (min-width: $m){
+        .navbar-brand{
+            display: block;
+            width: 100%;
+            @media screen and (min-width: $l){
+                height: 100%;
+                width: 25%;
+            }
+            
+        }
+        .navbar{
+            margin-bottom: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            @media screen and (min-width: $l){
                 justify-content: space-around;
+                justify-content: flex-end;
+                width: 75%;
+                margin-bottom: 0;
             }
 
             >*{
@@ -180,12 +232,8 @@ header.sticky-top{
                 align-items: center;
             }
             div{
-                flex:2;
                 i{
                     color: $secondary;
-                }
-                &:hover{
-                    background-color: $background;
                 }
                 #search{
                     display: none;
@@ -211,56 +259,91 @@ header.sticky-top{
                     
                 }
                 @media screen and (min-width: $m){
-                    padding-left: $gap;
+                    flex:2;
+                    padding: 0 $gap;
                     a[title="rechercher"]{
                         display: none;
                     }
                     #search{
                         display: flex;
+                        align-items: center;
                     }
                 }
             }
             ul{
-     
                 li{
-                    padding: auto;
                     a, button{
                         display: block;
+                        padding: .5rem;
                         &.outline-secondary{
                             color: $secondary;
-                        }   
+                        }
+                        &:hover{
+                            color: $secondary;
+                        }  
                     }
                 }
             }
         } 
     }
 }
-
+/*========== MAIN CONTENT ==========*/
+main{
+    margin: 30vh 0 25vh;
+    @media screen and (min-width: $l){
+        margin-top: $header-height + 2rem ;
+    }
+}
+.alert{
+    width: 100%;
+    margin-bottom: 2rem;
+    padding: .8rem;
+    border-radius: .5rem;
+    -webkit-border-radius: .5rem;
+    -moz-border-radius: .5rem;
+    -ms-border-radius: .5rem;
+    -o-border-radius: .5rem;
+    font-weight: $font-bold;
+        &-success{
+        border:solid .125rem $success;
+        color: $success;
+    }
+    &-error{
+        border:solid .125rem $warning;
+        color: $warning;
+    }
+}
 .delete{
     color: $warning;
 }
 .card{
-    background-color: $light;
+    background-color: #fff;
     position: relative;
-    overflow: hidden;
-    border-radius: .4rem;
-    -webkit-border-radius: .4rem;
-    -moz-border-radius: .4rem;
-    -ms-border-radius: .4rem;
-    -o-border-radius: .4rem;
-    ;position: relative;
-
+    margin-bottom: $gap;
+    border-radius: .2rem;
+    -webkit-border-radius: .2rem;
+    -moz-border-radius: .2rem;
+    -ms-border-radius: .2rem;
+    -o-border-radius: .2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     h1{
         width: 100%;
         padding: .5rem;
-        background-color: $primary;
         color: $accent;
+    }
+    .card-header,
+    .card-body,
+    .card-footer{
+        width: 100%;
     }
 }
 /*===== MASONRY LAYOUT =====*/
 .grid { 
-    &> *{
+    & >*{
         margin-bottom: $gap;
+        break-inside: avoid;
     }
     @media screen and (min-width: $m){
         --columns: 2;
@@ -271,11 +354,8 @@ header.sticky-top{
             break-inside: avoid;
         }
     }
-    @media screen and (min-width: $l){
-        --columns: 3;
-    }
     @media screen and (min-width: $xl){
-        --columns: 4;
+        --columns: 3;
     }
 }
 @supports (grid-template-rows: masonry){
@@ -292,55 +372,60 @@ header.sticky-top{
 }
 /*===== FORMS =====*/
 .form{
-    margin: 10vh auto;
-    @media screen and(min-width: $m){
-        width: 70%;
+    margin: 20vh auto;
+
+    &::after{
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        content:'';
+        z-index: -1;
+        background-image: url('/img/background.jpg');
+        background-position: center top;
+        background-repeat: no-repeat;
+        background-size: cover;
+        @media screen and (min-width: $l){
+            width: 60%;
+        }
+    }
+    .card{
+        @media screen  and (min-width: $m){
+            width: 80%;
+            margin: auto;
+        }
+        @media screen  and (min-width: $l){
+            width: 50%;
+            margin: 0;
+            margin-left: auto;
+        }
     }
     form{
         padding: 1rem;
+        width: 90%;
         
-        & > div{
-            @media screen  and (min-width: $m){
-                width: 80%;
-                margin: auto;
-            }
-        }
-        & > div:not(.field){
-            @media screen  and (min-width: $l){
-                display: flex;
-                align-items: center;
-            
-                .field{
-                    flex: 1;
-                    padding: 1.5rem; 
-                }
-            }
-        }
         .field{
-            padding: 1.5rem 0;
-            
+            padding-bottom: 1rem;
+            width: 100%;
+
             label{
-                font-size: $small-font-size;
-                width: 100%;
-            }
+                display: block;
+                padding-bottom: .3rem;
+                text-align: left;
+            } 
             input.form-control{
                 text-align: center;
                 width: 100%;
-                
-                padding: .3rem;
+                padding: .8em;
                 overflow: hidden;
-                border-color: transparent;
-                border-bottom-color: $secondary;
                 transition: all .5s ease;
                 -webkit-transition: all .5s ease;
                 -moz-transition: all .5s ease;
                 -ms-transition: all .5s ease;
                 -o-transition: all .5s ease;
                 &.is-invalid{
-                    border-bottom-color: $warning;
-                }   
-                &:focus{
-                    border-bottom-color: $primary;
+                    border-color: $warning;
                 }
                 &::placeholder{
                     color: $dark;
@@ -349,9 +434,12 @@ header.sticky-top{
             .invalid-feedback{
                 color: $warning;
                 font-size: $smaller-font-size;
-                font-weight: $font-semi-bold;
+                font-weight: $font-bold;
             }
-            
+        }
+
+        .btn{
+            min-width: 200px;
         }
     }
 
@@ -359,27 +447,88 @@ header.sticky-top{
 /*===== POSTS =====*/
 section#articles{
     margin: 2rem 0;
-
-    article{
-        &>*{
-            padding: .8rem;
+    article.card{
+        text-align: left;
+        .card-header>*{
+            display: flex;
+            align-items: center;
         }
-        #actions{
+        .actions{
+            padding: .4rem;
             display:flex;
-            justify-content: flex-end;
-            a {
+            align-self: flex-end;
+            a{
                 color: $dark;
             }
         }
-        .card-body{
-            .card-text{
-                padding: .7rem;
-                white-space: pre-line;
+        .card-header{
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            padding: 1rem 1.5rem 0;
+            .posted-by{
+                display: inline-flex;
+                align-items: center;
+                padding-right: .5rem;
+                font-weight: $font-bold;
+            }
+            .posted-by::before{
+                content: "_";
+                padding: 0 .5rem 1rem;
+                display: inline-block;
+            }
+            &::after{
+                content: "";
+                z-index: 1;
+                width: 6rem;
+                height: 6rem;
+                position: absolute;
+                top: 0;
+                right: 0;
+                background-image: url("data:image/svg+xml,%3Csvg id='patternId' width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='a' patternUnits='userSpaceOnUse' width='40' height='40' patternTransform='scale(2) rotate(45)'%3E%3Crect x='0' y='0' width='100%25' height='100%25' fill='hsla( 0)'/%3E%3Cpath d='M11 6a5 5 0 01-5 5 5 5 0 01-5-5 5 5 0 015-5 5 5 0 015 5' stroke-width='1' stroke='none' fill='hsla({$secondary,1}, 1)'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='800%25' height='800%25' transform='translate(-44,-58)' fill='url(%2523a)'/%3E%3C/svg%3E");
             }
         }
+
+        .card-body,
         .card-footer{
-            background-color: $medium;
+            padding: .5rem 1.5rem;
         }                  
+        .post{
+            white-space: pre-line;
+            overflow-wrap: break-word;
+        }
+        .post-title{
+            font-size: 1.3rem;
+            color: $primary;
+        }
+        .post-link{
+            border: 1px solid $medium;
+            display: flex;
+            flex-direction: column;
+            background-color: $medium;
+            padding: 0;
+            margin: 1rem 0;
+            border-radius: .4rem;
+            -webkit-border-radius: .4rem;
+            -moz-border-radius: .4rem;
+            -ms-border-radius: .4rem;
+            -o-border-radius: .4rem;
+            overflow: hidden;
+            img{
+                width: 100%;
+            }
+            .link-description{
+                border-top:  1px solid $medium;
+                display: flex;
+                flex-direction: column;
+                padding: .5rem;
+                .domain{
+                    color: $secondary;
+                }
+            }
+
+        }
+        
     }
 }
 .tags {
@@ -388,69 +537,98 @@ section#articles{
     margin-bottom: .6rem;
     
     .tag{
-        font-size: $small-font-size;
-        padding: .1rem .6rem;
-        margin: .3rem .5rem;
-        background-color: $secondary;
-        color: $light;
-
-        :hover {
-            background-color: $accent;
+        font-size: $smaller-font-size;
+        text-transform: uppercase;
+        font-weight: $font-bold;
+        padding: .2rem 1rem;
+        margin: .3rem;
+        border: 1px solid $primary;
+        border-radius: .2rem;
+        -webkit-border-radius: .2rem;
+        -moz-border-radius: .2rem;
+        -ms-border-radius: .2rem;
+        -o-border-radius: .2rem;
+        color: $primary;
+        &:hover{
+            background-color: $primary;
+            color: white;
         }
     }
 }
-
-/*===== CONTENT =====*/
-main{
-    #account-details{
-        margin: 1.5rem 0;
-        width: 80%;
-        margin: 2rem auto;
-
+#account-details{
+        width: 100%;
+        padding: 2rem 1rem;
+        @media screen and (min-width: $l){
+            width: 90%;
+            margin: auto;
+        }
         
         .field{
             width: 100%;
             padding: .5rem;
+            text-align: left;
             @media screen and (min-width: $m){
                 display: flex;
             }
+
             .label, .input {
                 min-height: 1.5rem;
             }
             label, input{
+                display: block;
                 width: 100%;
             }
+
             label, .label {
-                font-weight: $font-semi-bold;
+                font-weight: $font-bold;
                 @media screen and (min-width: $m){
                     width: 35%;
-                    font-weight: $font-semi-bold;
+                    max-width: 11rem;
+                }
+                @media screen and (min-width: $xl){
+                    max-width: 15rem;
                 }
             }
             .input {
-                width: 70%;
+                width: 100%;
+                @media screen and (min-width: $m){
+                   width: 70%; 
+                }
+                
                 div {
+                    label{
+                        min-width: 9rem;
+                        margin-right: $gap;
+                    }
                     @media screen and (min-width: $m){
                         display: flex;
+                        padding-right: 0;
                     }
                 }
                 @media screen and (min-width: $m){
-                    width: 65%;
+                    flex: 2;
                 }
             }
+            &:last-of-type{
+                margin-bottom: $gap;
+            }
         }
-        :last-child{
-            border-bottom: none;
-        }
-    }
 }
-/*===== FOOTER =====*/
+
+/*========== FOOTER ==========*/
 footer{
-    background-color: $primary;
-    padding-top: 1.2rem;
-    text-align: center;
-    position: fixed;
+    position: absolute;
     bottom: 0;
+    clip-path:polygon(0 0, 100% 20%, 100% 100%, 0% 100%);
+    padding: 5rem 0 2rem;
+    text-align: center;
     width: 100%;
-    z-index: 100;
+    font-size: $smaller-font-size;
+    text-transform: uppercase;
+
+    .socials a i{
+        color: #fff !important;
+        font-size: 1.5rem;
+        padding: .5rem .5rem 0;
+    }
 }

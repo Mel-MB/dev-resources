@@ -2,17 +2,15 @@
 
 namespace Project\Controllers;
 
-use Project\Core\Application;
-use Project\Core\Controller;
-use Project\Core\Request;
+use Project\Core\{Application,Controller,Request};
 use Project\Entities\Post;
 use Project\Middlewares\AuthMiddleware;
 
 class PostsController extends Controller{
     public function __construct(){
-        $this->registerMiddleware(new AuthMiddleware(['list','userPublished']));
+        $this->registerMiddleware(new AuthMiddleware(['search']));
     }
-    public function create(Request $request){
+    public function create(){
         $post = new Post;
         
         $post->rules = [
@@ -20,12 +18,12 @@ class PostsController extends Controller{
             'tags' => [Post::RULE_REQUIRED]
         ];
         
-        if($request->isPost()){
-            $post->populate($request->getData());
+        if(Request::isPost()){
+            $post->populate(Request::getData());
 
             if ($post->validate()){
                 if($post->create()){
-                    Application::$app->session->setFlash('success', 'Les modifications ont été enregistrées');
+                    Application::$app->session->setFlash('success', 'Votre contribution a bien été ajoutée');
                     header('Location: /');
                     exit;
                 }
@@ -40,7 +38,7 @@ class PostsController extends Controller{
             'post' => $post
         ];
         
-        return self::render('front/_postForm',$data);
+        return self::render('back/_postForm',$data);
     }
     public function userPublished(){
         $posts = new Post;
@@ -52,10 +50,10 @@ class PostsController extends Controller{
             'description' => "Gérer mes contenus partagés aux autres étudiants",
             'user_posts' =>  $user_posts
         ];
-        return self::render('front/userPosts',$data);
+        return self::render('back/userPosts',$data);
         
     }
-    public function update(Request $request, int $id){
+    public function update(int $id){
         // Retrieve previous post content
         $post= Post::show($id);
         $post->rules = [
@@ -63,8 +61,8 @@ class PostsController extends Controller{
             'tags' => [Post::RULE_REQUIRED]
         ];
         
-        if($request->isPost()){
-            $post->populate($request->getData());
+        if(Request::isPost()){
+            $post->populate(Request::getData());
 
             if ($post->validate()){
                 if($post->update($id)){
@@ -83,12 +81,26 @@ class PostsController extends Controller{
             'submitMessage' => 'Mettre à jour',
             'post' => $post
         ];
-        return self::render('front/_postForm',$data);
+        return self::render('back/_postForm',$data);
     }
-    public function delete(Request $request, int $id){
+    public function delete(int $id){
         $post = new Post();
         if(!$post->delete($id)){
             Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard.");
+            return json_encode(false);
         }
+        return json_encode(true);
+    }
+    public function search(){
+        $requested = json_decode(file_get_contents('php://input'),true)['query'];
+        $posts = Post::search($requested);
+        $nbPosts = sizeof($posts) ?? 'Aucun';
+
+        // Page data
+        $data = [
+            'title' => "$nbPosts resources partagées sur \"$requested\".",
+            'posts' => $posts
+        ];
+        return self::render('front/searchResult',$data);
     }
 }

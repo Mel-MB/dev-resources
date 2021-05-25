@@ -17,4 +17,12 @@ class User extends Model{
     public static function editableAttributes(): array {
         return ['username', 'email', 'tags','job', 'own_website','github','linkedin','discord','codepen'];
     }
+
+    public static function getRole($userId){
+        $table = self::$table_name;
+        $request = self::prepare("SELECT `role` FROM  $table  WHERE  id = ?");
+        $request->execute([$userId]);
+        $result = $request->fetch();
+        return $result->role;
+    }
 }
