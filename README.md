@@ -1,7 +1,7 @@
 <!-- Project pitch -->
 
 <center>
-<h1>Dev-ressources</h1>	
+<h1>Dev-resources</h1>	
 <p>A post organizer to help resource sharing between "codemates"</p>
     <a href="#">Visit the app</a> - <a href="https://github.com/Mel-MB/dev-ressources/issues">Request a feature</a> - <a href="https://github.com/Mel-MB/dev-ressources/issues">Report a bug</a>
 </center>
