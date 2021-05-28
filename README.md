@@ -7,26 +7,33 @@
 </center>
 
 <!-- About the app-->
-
 ## About the project 
+This app was built for my training validation. The idea came from a need to keep organized and easily accessible the resources we shared on the course topics. 
 
-This app was born for my training validation. The idea came from a need to keep organized and easily accessible the resources we shared on the course topics. 
+### Context
+ In order to validate my training I had to fullfil all the technical requierments ordered by language bellow:
+ #### PHP
+ Create a PHP MVC structure using OOP
+ Configure composer to use PSR-4
+ Create a customised framework 
+ #### SQL
+ Tailor-made ORM
+ At least one complete CRUD
+ Minimum 4 tables with use of joints
+ Prepared requests and secured password storage
+ Create complex requests (transactions/imbricated requests, grouping or calculating columns)
+ 
+ 
 
 ### Built with
-
-- [PHP _current stable version is 7.4_](https://www.php.net/releases/7_4_0.php)
-
+- [PHP _current stable version 7.4_](https://www.php.net/releases/7_4_0.php)
 - [Composer](https://getcomposer.org/)
 
-  
 
 ## Getting started
-
 This is an open source project. Feel free to contribute and [report issues](https://github.com/Mel-MB/sharecodes/issues).
 
-
 ### Setup
-
 ```
 https://github.com/Mel-MB/sharecodes.git
 cd sharecodes
@@ -36,12 +43,8 @@ composer update
 ````
 
 ### Contributing
-
-
-This a school project, his purpose is mainly educational/experimental. 
-
+This a school project, his purpose is mainly educational/experimental.
 Any contributions are highly appreciated. 
-
 
 How to proceed:
 
