@@ -10,15 +10,16 @@ class Input extends Field{
     public const TYPE_NUMBER ='number';
     private string $type;
 
-    public function __construct(Entity $entity, string $attribute, string $input_type = self::TYPE_TEXT){
-        parent::__construct($entity,$attribute);       
-        $this->type = $input_type;
+    public function __construct(Entity $entity, string $attribute,string $input_type = null, string $placeholder = '&nbsp;'){
+        parent::__construct($entity,$attribute, $placeholder);       
+        $this->type = $input_type??self::TYPE_TEXT;
     }
 
     public function field(): string{
-        return sprintf('<input type="%s" name="%s" class="form-control%s" value="%s">',
+        return sprintf("<input type='%s' name='%s' placeholder='%s' class='form-control%s' value='%s'>",
             $this->type,
             $this->attribute ?? '',
+            $this->placeholder,
             $this->entity->hasError($this->attribute) ? ' is-invalid' : '',
             $this->type !== self::TYPE_PASSWORD ? $this->entity->{$this->attribute} : ''
         );

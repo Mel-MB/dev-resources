@@ -32,12 +32,13 @@ class Application{
             echo $this->router->resolve();
         } catch( \Exception $e) {
             if($e->getCode() === 404){
-                $this->router->response->setStatusCode($e->getCode());
-                //echo $this->controller->render('error', ['exception' => $e]);
-                //exit;
+                Response::setStatusCode($e->getCode());
+                echo $this->controller::render('error', ['exception' => $e]);
+                exit;
             }
             Application::$app->session->setFlash('error',$e->getMessage());
             header("Location: /");
+            exit;
         }
     }
 

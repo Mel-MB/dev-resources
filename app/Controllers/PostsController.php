@@ -2,31 +2,15 @@
 
 namespace Project\Controllers;
 
-use Project\Core\Application;
-use Project\Core\Controller;
-use Project\Core\Request;
+use Project\Core\{Application,Controller,Request};
 use Project\Entities\Post;
 use Project\Middlewares\AuthMiddleware;
 
 class PostsController extends Controller{
     public function __construct(){
-        $this->registerMiddleware(new AuthMiddleware(['list','userPublished']));
+        $this->registerMiddleware(new AuthMiddleware(['search']));
     }
-
-    public function list(){
-        //Retrieve all posts
-        $posts= Post::all();
-        
-        // Page data
-        $data = [
-            'title' => 'Partage de ressources Kercode',
-            'description' => 'Le blog de partage et classification de ressources de étudiants de Kercode',
-            'posts' => $posts
-        ];
-        $this->render('front/homepage',$data);
-    }
-
-    public function create(Request $request){
+    public function create(){
         $post = new Post;
         
         $post->rules = [
@@ -34,15 +18,16 @@ class PostsController extends Controller{
             'tags' => [Post::RULE_REQUIRED]
         ];
         
-        if($request->isPost()){
-            $post->populate($request->getData());
+        if(Request::isPost()){
+            $post->populate(Request::getData());
 
             if ($post->validate()){
                 if($post->create()){
-                    Application::$app->session->setFlash('success', 'Les modifications ont été enregistrées');
+                    Application::$app->session->setFlash('success', 'Votre contribution a bien été ajoutée');
                     header('Location: /');
                     exit;
                 }
+                Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard.");
             }
         }
         // Page data
@@ -53,10 +38,11 @@ class PostsController extends Controller{
             'post' => $post
         ];
         
-        return $this->render('front/_postForm',$data);
+        return self::render('back/_postForm',$data);
     }
     public function userPublished(){
-        $user_posts = Post::fromUser();
+        $posts = new Post;
+        $user_posts = $posts->fromUser();
         
         // Page data
         $data = [
@@ -64,35 +50,57 @@ class PostsController extends Controller{
             'description' => "Gérer mes contenus partagés aux autres étudiants",
             'user_posts' =>  $user_posts
         ];
-        return $this->render('front/userPosts',$data);
+        return self::render('back/userPosts',$data);
         
     }
-
-    public function delete($id){
-        $post = new Post();
-        // Delete post in database
-        $deletePost = $post->delete($id);
-        // Show user posts again
-        header('Location: index.php?action=my-posts');
-    }
-    public function update(Request $request, int $id){
+    public function update(int $id){
         // Retrieve previous post content
-        $previousPost= Post::selectBy('id',$id);
+        $post= Post::show($id);
+        $post->rules = [
+            'content' => [Post::RULE_REQUIRED, [Post::RULE_MIN, 'min'=>50], [Post::RULE_MAX, 'max'=>1000]],
+            'tags' => [Post::RULE_REQUIRED]
+        ];
+        
+        if(Request::isPost()){
+            $post->populate(Request::getData());
+
+            if ($post->validate()){
+                if($post->update($id)){
+                    Application::$app->session->setFlash('success', 'Les modifications ont été enregistrées');
+                    header('Location: /mes-posts');
+                    exit;
+                }
+                Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard.");
+            }
+        }
+
         // Page data
         $data = [
             'title' => "Modifier un post",
             'description' => "Modifier un contenu partagé aux étudiants de Kercode",
             'submitMessage' => 'Mettre à jour',
-            'post' => array_map('htmlentities',$previousPost)
+            'post' => $post
         ];
-        
-        // Behaviour in case of submit
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            
-            // Create new post in database
-            $updatePost = $this->Post->update($id, $_POST['pContent']);
-            header('Location: index.php');
+        return self::render('back/_postForm',$data);
+    }
+    public function delete(int $id){
+        $post = new Post();
+        if(!$post->delete($id)){
+            Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard.");
+            return json_encode(false);
         }
-        return $this->view('front/postForm',$data);
+        return json_encode(true);
+    }
+    public function search(){
+        $requested = json_decode(file_get_contents('php://input'),true)['query'];
+        $posts = Post::search($requested);
+        $nbPosts = sizeof($posts) ?? 'Aucun';
+
+        // Page data
+        $data = [
+            'title' => "$nbPosts resources partagées sur \"$requested\".",
+            'posts' => $posts
+        ];
+        return self::render('front/searchResult',$data);
     }
 }

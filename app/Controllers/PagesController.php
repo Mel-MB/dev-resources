@@ -3,26 +3,42 @@
 namespace Project\Controllers;
 
 use Project\Core\{Application, Controller, Request};
-use Project\Entities\User;
+use Project\Entities\{Post, User};
+use Project\Models\Tag;
 
 class PagesController extends Controller{
     public function home(){
-        $data = [
-            'title' => 'Partage de ressources Kercode',
-            'description' => 'Le blog de partage et classification de ressources de étudiants de Kercode'
-        ];
-
-        return $this->render('front/home',$data);
+        // Research bar
+        $mostUsedTags = Tag::selectTop5();
+        //Retrieve all posts
+        $posts= Post::all();
+        // Page data
+         $data = [
+            'tags' => $mostUsedTags,
+            'posts' => $posts
+         ];
+         return self::render('front/home',$data);
     }
-    public function login(Request $request){
+    public function category(string $tag_name){
+        $posts= Post::fromCategory($tag_name);;
+        $nbPosts = sizeof($posts) ?? 'Aucun';
+        $units = ($nbPosts === 1)?'resource partagée':'resources partagées';
+        // Page data
+        $data = [
+            'title' => "$nbPosts $units sur $tag_name.",
+            'posts' => $posts
+        ];
+        return self::render('front/searchResult',$data);
+    }
+    public function login(){
         $user = new User;
         $user->rules = [
             'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18]],
             'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]]
         ];
 
-        if ($request->isPost()){
-            $user->populate($request->getData());
+        if (Request::isPost()){
+            $user->populate(Request::getData());
  
             if($user->validate()){
                 if($user->connect()){
@@ -41,20 +57,19 @@ class PagesController extends Controller{
             'user' => $user,
         ];
         
-        return $this->render('front/login',$data);
+        return self::render('front/login',$data);
     }
-    public function register(Request $request){
+    public function register(){
         $user = new User;
         $user->rules = [
-            'username' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18],User::RULE_UNIQUE],
-            'email' => [User::RULE_REQUIRED, User::RULE_EMAIL,User::RULE_UNIQUE],
-            'promotion' => [User::RULE_REQUIRED, User::RULE_YEAR],
+            'username' => [User::RULE_REQUIRED, User::RULE_ALPHANUM, [User::RULE_MIN, 'min'=>3], [User::RULE_MAX, 'max'=>18], User::RULE_UNIQUE],
+            'email' => [User::RULE_REQUIRED, User::RULE_EMAIL, User::RULE_UNIQUE],
             'password' => [User::RULE_REQUIRED, [User::RULE_MIN, 'min'=>8]],
             'password_confirm' => [User::RULE_REQUIRED, [User::RULE_MATCH, 'match'=> 'password']]
         ];
         
-        if($request->isPost()){
-            $user->populate($request->getData());
+        if(Request::isPost()){
+            $user->populate(Request::getData());
 
             if ($user->validate()){
                 if($user->create()){
@@ -70,9 +85,9 @@ class PagesController extends Controller{
         $data = [
             'title' => "S'inscrire",
             'description' => "Accès à l'espace personnel de partage et classification de ressources de étudiants de Kercode",
-            'entity' => $user,
+            'user' => $user,
         ];
 
-        return $this->render('front/register',$data);
+        return self::render('front/register',$data);
     }
 }
