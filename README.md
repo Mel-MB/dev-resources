@@ -43,7 +43,7 @@ In order to validate my training I had to fullfil all the technical requierments
  - 
 
 ### Built with
-- [PHP 7.4_](https://www.php.net/releases/7_4_0.php)
+- [PHP 7.4](https://www.php.net/releases/7_4_0.php)
 - [Composer](https://getcomposer.org/)
 - [Npm](https://www.npmjs.com/)
 - [Tagify](https://yaireo.github.io/tagify/)
