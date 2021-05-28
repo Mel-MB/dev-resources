@@ -1,9 +1,9 @@
 <!-- Project pitch -->
 
 <center>
-<h1>Sharecodes</h1>	
-<p>A post organizer to help resource sharing between classmates</p>
-    <a href="#">Visit the app</a> - <a href="https://github.com/Mel-MB/sharecodes/issues">Request a feature</a> - <a href="https://github.com/Mel-MB/sharecodes/issues">Report a bug</a>
+<h1>Dev-ressources</h1>	
+<p>A post organizer to help resource sharing between "codemates"</p>
+    <a href="#">Visit the app</a> - <a href="https://github.com/Mel-MB/dev-ressources/issues">Request a feature</a> - <a href="https://github.com/Mel-MB/dev-ressources/issues">Report a bug</a>
 </center>
 
 <!-- About the app-->
@@ -33,15 +33,14 @@ cd sharecodes
 composer install
 =======
 composer update
-
+````
 
 ### Contributing
 
 
-This a school project, his purpose is mainly educational. 
+This a school project, his purpose is mainly educational/experimental. 
 
 Any contributions are highly appreciated. 
-
 
 
 How to proceed:
