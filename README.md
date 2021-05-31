@@ -15,7 +15,7 @@ In order to validate my training I had to fullfil all the technical requierments
 #### PHP
  - Create a PHP MVC structure using OOP
  - Configure composer to comply with the PSR-4 standards
- - Create a customised framework 
+ - Create a customieed framework 
 #### SQL
  - Tailor-made ORM
  - At least one complete CRUD
@@ -40,7 +40,6 @@ In order to validate my training I had to fullfil all the technical requierments
  - W3C valid structure (proper use of HTML5 structure)
  - SEO friendly
  - SVG creation
- - 
 
 ### Built with
 - [PHP 7.4](https://www.php.net/releases/7_4_0.php)
