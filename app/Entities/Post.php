@@ -136,7 +136,7 @@ class Post extends Entity{
         return str_replace(
             $this->link,
             sprintf(
-                '</p><a class="post-link" href="%s">
+                '</p><a class="post-link" href="%s" title="Lire l\'article sur %">
                     <img src="%s" alt="%s">
                     <div class="link-description">
                         <p class="domain">%s</p>
@@ -144,6 +144,7 @@ class Post extends Entity{
                     </div>
                 </a><p>',
                 $this->link,
+                $this->linkTitle,
                 $this->linkIcon,
                 $this->linkTitle,
                 $this->linkDomain,

@@ -3,7 +3,7 @@
     <div class="wrapper">
         <div class="tags">
             <?php foreach($tags as $tag):?>
-            <a href="/posts/<?=$tag->name?>" class="tag"><?=$tag->name?></a>
+            <a href="/posts/<?=$tag->name?>" class="tag" title="Voir tous les articles sur <?=$tag->name?>"><?=$tag->name?></a>
             <?php endforeach ?>
         </div>
     </div>

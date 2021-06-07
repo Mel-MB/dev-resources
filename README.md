@@ -3,7 +3,7 @@
 <center>
 <h1>Dev-resources</h1>	
 <p>A post organizer to help resource sharing between "codemates"</p>
-    <a href="http://www.dev-ressources.com/">Visit the app</a> - <a href="https://github.com/Mel-MB/dev-ressources/issues">Request a feature</a> - <a href="https://github.com/Mel-MB/dev-ressources/issues">Report a bug</a>
+    <a href="http://www.dev-ressources.com/" title="Dev-ressources, the online-app">Visit the app</a> - <a href="https://github.com/Mel-MB/dev-ressources/issues" title="Feature request on GitHub">Request a feature</a> - <a href="https://github.com/Mel-MB/dev-ressources/issues" title="Issues reporting on GitHub">Report a bug</a>
 </center>
 
 <!-- About the app-->

@@ -14,7 +14,7 @@
         <div class="card-footer post-infos">
             <div class ="tags">
                 <?php foreach($post->tags as $tag): ?>
-                    <a href="/posts/<?=$tag?>" class="tag"><?=$tag?></a>
+                    <a href="/posts/<?=$tag?>" title="Voir tous les articles sur <?=$tag?>" class="tag"><?=$tag?></a>
                 <?php endforeach ?>
             </div>
         </div>

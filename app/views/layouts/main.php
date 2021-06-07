@@ -27,7 +27,7 @@ $router = Application::$app->router;
     <header class="sticky-top">
         <div class="container">
             <nav>
-                <a href="/" class="navbar-brand">
+                <a href="/" class="navbar-brand" title="Retour à l'accueil">
                     <div class="wrapper">
                         <svg width="185" height="100" version="1.1" class="logo" xmlns="http://www.w3.org/2000/svg" >
                             <defs>  
@@ -87,10 +87,10 @@ $router = Application::$app->router;
   
     <footer class="bg-primary bg-up">
         <div class="container">
-            <p>&copy <a href="https://github.com/Mel-MB" class="secondary">Mel MB</a> _ Greta 2021</p>
+            <p>&copy <a href="https://github.com/Mel-MB" title="Mon portfolio" class="secondary">Mel MB</a> _ Greta 2021</p>
             <div class="socials">
-                <a href="https://github.com/Mel-MB"><i class="fab fa-github" aria-label="Github"></i></a>
-                <a href="https://www.linkedin.com/in/m%C3%A9lanie-mirbeau-baudin-bbb906155/"><i class="fab fa-linkedin-in" aria-label="Linkedin"></i></a>
+                <a href="https://github.com/Mel-MB" title="Mon GitHub"><i class="fab fa-github" aria-label="Github"></i></a>
+                <a href="https://www.linkedin.com/in/m%C3%A9lanie-mirbeau-baudin-bbb906155/" title="Mon linkedIn"><i class="fab fa-linkedin-in" aria-label="Linkedin"></i></a>
             </div>
         </div>
     </footer>
