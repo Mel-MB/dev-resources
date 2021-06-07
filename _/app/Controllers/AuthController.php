@@ -63,7 +63,7 @@ class AuthController extends Controller{
             // User Feedback
             Application::$app->session->setFlash('error', "Une erreur s'est produite, veuillez réessayer plus tard.");
             header('Location: /modifier-mon-compte');  
-            exit();
+            return;
         }
         // Unset connection on session
         Application::$app->session->remove();

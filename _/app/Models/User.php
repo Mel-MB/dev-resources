@@ -19,7 +19,6 @@ class User extends Model{
     }
 
     public static function getRole($userId){
-        if(!$userId) return 0;
         $table = self::$table_name;
         $request = self::prepare("SELECT `role` FROM  $table  WHERE  id = ?");
         $request->execute([$userId]);
